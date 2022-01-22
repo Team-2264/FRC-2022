@@ -7,10 +7,8 @@ package frc.robot;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import edu.wpi.first.wpilibj.Solenoid;
-import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.Joystick;
-import edu.wpi.first.wpilibj.Relay.Value;
+
 
 /**
  * The VM is configured to automatically run this class, and to call the functions corresponding to
@@ -19,9 +17,10 @@ import edu.wpi.first.wpilibj.Relay.Value;
  * project.
  */
 public class Robot extends TimedRobot {
-  Pneumatics pneumatics;
+  Pneumatics solenoidOne;
   Joystick joy;
-  boolean triggered = false;
+  Drivetrain drive;
+  Variables varLib;
   private static final String kDefaultAuto = "Default";
   private static final String kCustomAuto = "My Auto";
   private String m_autoSelected;
@@ -33,6 +32,9 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void robotInit() {
+    joy = new Joystick(0);
+    solenoidOne = new Pneumatics(4, 7);
+    drive = new Drivetrain();
     m_chooser.setDefaultOption("Default Auto", kDefaultAuto);
     m_chooser.addOption("My Auto", kCustomAuto);
     SmartDashboard.putData("Auto choices", m_chooser);
@@ -82,19 +84,23 @@ public class Robot extends TimedRobot {
   /** This function is called once when teleop is enabled. */
   @Override
   public void teleopInit() {
-    joy = new Joystick(0);
-    pneumatics = new Pneumatics(4, 7);
-    pneumatics.doubleSolenoid.set(DoubleSolenoid.Value.kOff);
+
   }
 
   /** This function is called periodically during operator control. */
   @Override
   public void teleopPeriodic() {
     if(joy.getTriggerPressed()){
-      pneumatics.doubleSolenoid.set(DoubleSolenoid.Value.kReverse);
+      solenoidOne.extendSolenoid();
     }
     if(joy.getTriggerReleased()){
-      pneumatics.doubleSolenoid.set(DoubleSolenoid.Value.kForward);
+      solenoidOne.retractSolenoid();
+    }
+    if(Math.abs(joy.getX()) > varLib.threshX || Math.abs(joy.getY()) > varLib.threshY || Math.abs(joy.getZ()) > varLib.threshZ){
+      drive.Drive(joy);
+    }
+    else{
+      drive.BroStop(); 
     }
   }
 

@@ -8,15 +8,15 @@ public class Pneumatics{
     DoubleSolenoid doubleSolenoid;
     Compressor compressor;
     
-    public Pneumatics(int channelOne, int channelTwo) throws UncleanStatusException{
-        doubleSolenoid = new DoubleSolenoid(1, PneumaticsModuleType.CTREPCM, channelOne, channelTwo);
+    public Pneumatics(int forwardChannel, int reverseChannel) throws UncleanStatusException{
+        doubleSolenoid = new DoubleSolenoid(1, PneumaticsModuleType.CTREPCM, forwardChannel, reverseChannel);
         doubleSolenoid.set(Value.kOff);
     }
 
     public void extendSolenoid(){
-        doubleSolenoid.set(Value.kReverse);
+        doubleSolenoid.set(Value.kForward);
     }
     public void retractSolenoid(){
-        doubleSolenoid.set(Value.kForward);
+        doubleSolenoid.set(Value.kReverse);
     }
 }

@@ -33,7 +33,7 @@ public class Robot extends TimedRobot {
   @Override
   public void robotInit() {
     joy = new Joystick(0);
-    solenoidOne = new Pneumatics(4, 7);
+    solenoidOne = new Pneumatics(7, 4);
     drive = new Drivetrain();
     m_chooser.setDefaultOption("Default Auto", kDefaultAuto);
     m_chooser.addOption("My Auto", kCustomAuto);
@@ -96,12 +96,8 @@ public class Robot extends TimedRobot {
     if(joy.getTriggerReleased()){
       solenoidOne.retractSolenoid();
     }
-    if(Math.abs(joy.getX()) > varLib.threshX || Math.abs(joy.getY()) > varLib.threshY || Math.abs(joy.getZ()) > varLib.threshZ){
-      drive.Drive(joy);
-    }
-    else{
-      drive.BroStop(); 
-    }
+
+    drive.Drive(joy);
   }
 
   /** This function is called once when the robot is disabled. */

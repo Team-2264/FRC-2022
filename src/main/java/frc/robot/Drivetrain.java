@@ -17,28 +17,30 @@ public class Drivetrain {
         backLeft = new WPI_TalonFX(2);
         backRight = new WPI_TalonFX(3);
         frontLeft.setInverted(true);
-        backLeft.setInverted(true);
+        //backLeft.setInverted(true);
+        frontRight.setInverted(true);
         mDrive = new MecanumDrive(frontLeft, backLeft, frontRight, backRight);
         mDrive.setSafetyEnabled(true);
 
         varLib = new Variables();
-
     }
 
-    public void Drive(Joystick j){
-        mDrive.driveCartesian(doCalculations(j.getY()) * varLib.speedY, doCalculations(j.getX()) * varLib.speedX, doCalculations(j.getZ()) * varLib.speedZ);
+    public void Drive(Joystick joy){
+            //make the robot move with calculations performed to each of the joystick values
+            //mDrive.driveCartesian(doCalculations(joy.getY()) * varLib.speedY, doCalculations(joy.getX()) * varLib.speedX, doCalculations(joy.getZ()) * varLib.speedZ);
+            mDrive.driveCartesian(doCalculations(joy.getX()) * varLib.speedX, doCalculations(joy.getY()) * varLib.speedY, doCalculations(joy.getZ()) * varLib.speedZ);
     }
 
-    public void BroStop(){
-        mDrive.driveCartesian(0, 0, 0);
+    public double doCalculations(double inValue){
+        //return 0 if the input value does not exceed the threshold
+        if(Math.abs(inValue) < varLib.threshold){
+            return 0;
+        }
+        //add an exponential transformation to the value depending on the speed curve
+        if(inValue < 0){
+            return -(Math.pow(inValue * -1, varLib.speedCurve));
+        } else {
+            return (Math.pow(inValue, varLib.speedCurve));
+        }
     }
-
-public double doCalculations(double inValue){
-    if(inValue < 0){
-        return -(Math.sqrt(inValue));
-    }
-    else{
-        return (Math.sqrt(inValue));
-    }
-}
 }

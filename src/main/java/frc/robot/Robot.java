@@ -17,9 +17,9 @@ import edu.wpi.first.wpilibj.Joystick;
  * project.
  */
 public class Robot extends TimedRobot {
-  Pneumatics solenoidOne;
   Joystick joy;
   Drivetrain drive;
+  Climbing climbing;
   Variables varLib;
   private static final String kDefaultAuto = "Default";
   private static final String kCustomAuto = "My Auto";
@@ -33,7 +33,7 @@ public class Robot extends TimedRobot {
   @Override
   public void robotInit() {
     joy = new Joystick(0);
-    solenoidOne = new Pneumatics(7, 4);
+    climbing = new Climbing();
     drive = new Drivetrain();
     m_chooser.setDefaultOption("Default Auto", kDefaultAuto);
     m_chooser.addOption("My Auto", kCustomAuto);
@@ -91,10 +91,10 @@ public class Robot extends TimedRobot {
   @Override
   public void teleopPeriodic() {
     if(joy.getTriggerPressed()){
-      solenoidOne.extendSolenoid();
+      climbing.extendBack();
     }
     if(joy.getTriggerReleased()){
-      solenoidOne.retractSolenoid();
+      climbing.retractBack();
     }
 
     drive.Drive(joy);

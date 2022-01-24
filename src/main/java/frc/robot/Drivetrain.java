@@ -12,10 +12,10 @@ public class Drivetrain {
     Variables varLib;
 
     public Drivetrain(){
-        frontLeft = new WPI_TalonFX(1);
-        frontRight = new WPI_TalonFX(0);
-        backLeft = new WPI_TalonFX(2);
-        backRight = new WPI_TalonFX(3);
+        frontLeft = new WPI_TalonFX(varLib.frontLeftWheel);
+        backLeft = new WPI_TalonFX(varLib.backLeftWheel);
+        frontRight = new WPI_TalonFX(varLib.frontRightWheel);
+        backRight = new WPI_TalonFX(varLib.backRightWheel);
         frontLeft.setInverted(true);
         //backLeft.setInverted(true);
         frontRight.setInverted(true);

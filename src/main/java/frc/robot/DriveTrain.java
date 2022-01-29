@@ -94,6 +94,10 @@ public class DriveTrain {
         pid_z.setSetpoint(0);
 
         crossedLine = false;
+
+        DigitalInput beamIntake = new DigitalInput(0);
+        DigitalInput beamIndex = new DigitalInput(0);
+
     }
 
     public void mecDrive(Joystick j) {
@@ -253,14 +257,11 @@ public class DriveTrain {
         shooting = value;
     }   
 
-    public void shoot(distance) {
-        
+    public void shoot(distance) {       
         topMotorSpeed = distance / 100
         bottomMotorSpeed = distance / 100
         topShooter.Set(topMotorSpeed)
         bottomShooter.Set(bottomMotorSpeed)
-        
-
     }
 
     public void shooterStop() {
@@ -272,8 +273,17 @@ public class DriveTrain {
     public void intake(){
         if (j.getButton(2)){
             intakeM.set(speed);
-    }   else (beam breaks stuff) {
-            intakeM (0,0);
-            indexM (speed, time/degrees); // till ball gets into positon
+            beam();
+    }
+     // till ball gets into positon
         //enter values and stuff once the robot is complete 
+    
+    public void beam(){
+        while beamIntake.get(false){
+            intakeM.set(speed);
+        }
+        while beamIndex.get(true){
+            indexM.(0);
+        }
+    }
 }

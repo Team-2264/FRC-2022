@@ -250,12 +250,18 @@ public class DriveTrain {
         crossedLine = true;
         fullStop();
 
-        
     }
 
     public void setShooting(boolean value) {
         shooting = value;
     }   
+
+    private double convertToUnitsPer100ms(double rpm){
+         // This function converts RPM to the unit, called "unit," that the motors use.
+        double unitsPerMinute = (rpm * 2048);
+        double unitsPer100 = unitsPerMinute / 600;
+        return unitsPer100;
+     }
 
     public void shoot(distance) {       
         topMotorSpeed = distance / 100

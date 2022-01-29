@@ -8,9 +8,7 @@ import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj.drive.MecanumDrive;
-// import edu.wpi.first.math.kinematics.MecanumDriveKinematics;
-// import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-// import edu.wpi.first.math.MathUtil;
+
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class DriveTrain {
@@ -43,6 +41,9 @@ public class DriveTrain {
     WPI_TalonSRX frontLeft;
     WPI_TalonSRX frontRight;
 
+    WPI_TalonSRX intakeM;
+    WPI_TalonSRX indexM;
+
     PIDController pid_x = new PIDController(kP_x, kI_x, kD_x);
     PIDController pid_y = new PIDController(kP_y, kI_y, kD_y);
     PIDController pid_z = new PIDController(kP_z, kI_z, kD_z);
@@ -68,6 +69,9 @@ public class DriveTrain {
         frontRight = new WPI_TalonSRX(Variables.frontRightMotorPort);
         backRight = new WPI_TalonSRX(Variables.backRightMotorPort);
         backLeft = new WPI_TalonSRX(Variables.backLeftMotorPort);
+
+        intakeM = new WPI_TalonSRX(Variables.intakeMotorPort);
+        indexM = new WPI_TalonSRX(Variables.indexMotorPorts);
 
         // backLeft.setInverted(true);
         // backRight.setInverted(true);
@@ -245,4 +249,12 @@ public class DriveTrain {
         shooting = value;
     }
 
+// This code dosent actually work. 
+    public void intake(){
+        if (j.getButton(2)){
+            intakeM.set(speed);
+    }   else (beam breaks stuff) {
+            intakeM (0,0);
+            indexM (speed, time/degrees); // till ball gets into positon
+        //enter values and stuff once the robot is complete 
 }

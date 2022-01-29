@@ -95,6 +95,12 @@ public class Robot extends TimedRobot {
   @Override
   public void teleopPeriodic() {
     dt.mecDrive(j);
+    
+    if(j.get(3) > 0){
+        dt.shoot();
+    } else {
+        dt.shooterStop();
+    }
 
   }
 

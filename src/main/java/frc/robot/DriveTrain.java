@@ -43,6 +43,8 @@ public class DriveTrain {
 
     WPI_TalonSRX intakeM;
     WPI_TalonSRX indexM;
+    WPI_TalonSRX topShooter;
+    WPI_TalonSRX bottomShooter;
 
     PIDController pid_x = new PIDController(kP_x, kI_x, kD_x);
     PIDController pid_y = new PIDController(kP_y, kI_y, kD_y);
@@ -72,6 +74,8 @@ public class DriveTrain {
 
         intakeM = new WPI_TalonSRX(Variables.intakeMotorPort);
         indexM = new WPI_TalonSRX(Variables.indexMotorPorts);
+        topShooter = new WPI_TalonSRX(Variables.shooterMotorTopPort);
+        bottomShooter = new WPI_TalonSRX(Variables.shooterMotorBottomPort);
 
         // backLeft.setInverted(true);
         // backRight.setInverted(true);
@@ -247,6 +251,21 @@ public class DriveTrain {
 
     public void setShooting(boolean value) {
         shooting = value;
+    }   
+
+    public void shoot(distance) {
+        
+        topMotorSpeed = distance / 100
+        bottomMotorSpeed = distance / 100
+        topShooter.Set(topMotorSpeed)
+        bottomShooter.Set(bottomMotorSpeed)
+        
+
+    }
+
+    public void shooterStop() {
+        topShooter.Set(0)
+        bottomShooter.Set(0)
     }
 
 // This code dosent actually work. 

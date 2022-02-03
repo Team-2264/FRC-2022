@@ -34,7 +34,7 @@ public class Robot extends TimedRobot {
   public void robotInit() {
     joy = new Joystick(0);
     climbing = new Climbing();
-    drive = new Drivetrain();
+    //drive = new Drivetrain();
     m_chooser.setDefaultOption("Default Auto", kDefaultAuto);
     m_chooser.addOption("My Auto", kCustomAuto);
     SmartDashboard.putData("Auto choices", m_chooser);
@@ -97,7 +97,7 @@ public class Robot extends TimedRobot {
       climbing.retractBack();
     }
 
-    drive.Drive(joy);
+    //drive.Drive(joy);
   }
 
   /** This function is called once when the robot is disabled. */

@@ -22,12 +22,12 @@ public class Variables {
     public final int shooterRight = -1;
     public final int shooterLoad = -1;
     //end of CAN IDs
+
     //start of PCM IDs
     public final int backRightForward = 7;
-    public final int backRightBackward = 4;
-
-    public final int backLeftForward = -1;
-    public final int backLeftBackward = -1;
+    public final int backRightBackward = 6;
+    public final int backLeftForward = 4;
+    public final int backLeftBackward = 5;
     public final int frontMiddleForward = -1;
     public final int frontMiddleBackward = -1;
     //end of PCM IDs

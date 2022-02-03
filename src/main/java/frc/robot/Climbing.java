@@ -8,18 +8,18 @@ public class Climbing {
         varLib = new Variables();
 
         backRight = new ClimbingSolenoid(varLib.backRightForward, varLib.backRightBackward);
-        //backLeft = new ClimbingSolenoid(0, 0);
+        backLeft = new ClimbingSolenoid(varLib.backLeftForward, varLib.backLeftBackward);
         //frontMiddle = new ClimbingSolenoid(0, 0);
     }
 
     public void extendBack(){
         backRight.extendSolenoid();
-        //backLeft.extendSolenoid();
+        backLeft.extendSolenoid();
     }
 
     public void retractBack(){
         backRight.retractSolenoid();
-        //backLeft.retractSolenoid();
+        backLeft.retractSolenoid();
     }
 
     public void extendFront(){

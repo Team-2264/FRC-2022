@@ -8,9 +8,9 @@ public class ClimbingSolenoid{
     DoubleSolenoid doubleSolenoid;
     Compressor compressor;
     
-    public ClimbingSolenoid(int forwardChannel, int reverseChannel) throws UncleanStatusException{
+    public ClimbingSolenoid(int forwardChannel, int reverseChannel){
         doubleSolenoid = new DoubleSolenoid(1, PneumaticsModuleType.CTREPCM, forwardChannel, reverseChannel);
-        doubleSolenoid.set(Value.kOff);
+        doubleSolenoid.set(Value.kReverse);
     }
 
     public void extendSolenoid(){

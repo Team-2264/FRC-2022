@@ -4,6 +4,7 @@ import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableInstance;
+import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.math.controller.PIDController;
@@ -56,6 +57,9 @@ public class DriveTrain {
 
     NetworkTable limeTable;
 
+    DigitalInput beamIntake;
+    DigitalInput beamIndex;
+
     boolean shooting = false;
 
     public DriveTrain() {
@@ -72,8 +76,8 @@ public class DriveTrain {
         backRight = new WPI_TalonSRX(Variables.backRightMotorPort);
         backLeft = new WPI_TalonSRX(Variables.backLeftMotorPort);
 
-        intakeM = new WPI_TalonSRX(Variables.intakeMotorPort);
-        indexM = new WPI_TalonSRX(Variables.indexMotorPorts);
+        intakeM = new WPI_TalonSRX(Variables.intakeMotorOnePort);
+        indexM = new WPI_TalonSRX(Variables.indexMotorOnePort);
         topShooter = new WPI_TalonSRX(Variables.shooterMotorTopPort);
         bottomShooter = new WPI_TalonSRX(Variables.shooterMotorBottomPort);
 
@@ -95,8 +99,8 @@ public class DriveTrain {
 
         crossedLine = false;
 
-        DigitalInput beamIntake = new DigitalInput(0);
-        DigitalInput beamIndex = new DigitalInput(0);
+        beamIntake = new DigitalInput(0);
+        beamIndex = new DigitalInput(0);
 
     }
 
@@ -263,33 +267,34 @@ public class DriveTrain {
         return unitsPer100;
      }
 
-    public void shoot(distance) {       
-        topMotorSpeed = distance / 100
-        bottomMotorSpeed = distance / 100
-        topShooter.Set(topMotorSpeed)
-        bottomShooter.Set(bottomMotorSpeed)
+    public void shoot(int distance) {       
+        double topMotorSpeed = distance / 100;
+        double bottomMotorSpeed = distance / 100;
+        topShooter.set(topMotorSpeed);
+        bottomShooter.set(bottomMotorSpeed);
     }
 
     public void shooterStop() {
-        topShooter.Set(0)
-        bottomShooter.Set(0)
+        topShooter.set(0);
+        bottomShooter.set(0);
     }
 
 // This code dosent actually work. 
-    public void intake(){
-        if (j.getButton(2)){
+    public void intake(Joystick j){
+        if (j.getRawButton(2)){
             intakeM.set(speed);
             beam();
+        }
     }
      // till ball gets into positon
         //enter values and stuff once the robot is complete 
     
     public void beam(){
-        while beamIntake.get(false){
+        if(!beamIntake.get()){
             intakeM.set(speed);
         }
-        while beamIndex.get(true){
-            indexM.(0);
+        if(beamIndex.get()){
+            indexM.set(0);
         }
     }
 }

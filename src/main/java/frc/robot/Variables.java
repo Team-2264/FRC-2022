@@ -14,6 +14,7 @@ public class Variables {
     public static final int shooterMotorBottomPort = 6;
 
     public static final int intakeMotorOnePort = 9;
+    public static final int indexMotorOnePort = 8;
 
     public static final int controlMotorPort = 11;
 

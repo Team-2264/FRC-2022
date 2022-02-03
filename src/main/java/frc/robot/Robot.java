@@ -24,9 +24,8 @@ public class Robot extends TimedRobot {
   private final SendableChooser<String> m_chooser = new SendableChooser<>();
 
   public DriveTrain dt;
-
   public Joystick j;
-
+  int distance;
   /**
    * This function is run when the robot is first started up and should be used for any
    * initialization code.
@@ -96,8 +95,9 @@ public class Robot extends TimedRobot {
   public void teleopPeriodic() {
     dt.mecDrive(j);
     
-    if(j.get(3) > 0){
-        dt.shoot();
+    if(j.getRawButton(3)){
+      distance = 0;
+        dt.shoot(distance);
     } else {
         dt.shooterStop();
     }

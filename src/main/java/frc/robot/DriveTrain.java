@@ -4,7 +4,6 @@ import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableInstance;
-import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.math.controller.PIDController;
@@ -41,11 +40,10 @@ public class DriveTrain {
     WPI_TalonSRX backRight;
     WPI_TalonSRX frontLeft;
     WPI_TalonSRX frontRight;
-
-    WPI_TalonSRX intakeM;
-    WPI_TalonSRX indexM;
-    WPI_TalonSRX topShooter;
-    WPI_TalonSRX bottomShooter;
+    
+    WPI_TalonSRX shooterTop;
+    WPI_TalonSRX shooterBottom;
+    WPI_TalonSRX winchMotor;
 
     PIDController pid_x = new PIDController(kP_x, kI_x, kD_x);
     PIDController pid_y = new PIDController(kP_y, kI_y, kD_y);
@@ -56,9 +54,6 @@ public class DriveTrain {
     MecanumDrive mDrive;
 
     NetworkTable limeTable;
-
-    DigitalInput beamIntake;
-    DigitalInput beamIndex;
 
     boolean shooting = false;
 
@@ -76,17 +71,19 @@ public class DriveTrain {
         backRight = new WPI_TalonSRX(Variables.backRightMotorPort);
         backLeft = new WPI_TalonSRX(Variables.backLeftMotorPort);
 
-        intakeM = new WPI_TalonSRX(Variables.intakeMotorOnePort);
-        indexM = new WPI_TalonSRX(Variables.indexMotorOnePort);
-        topShooter = new WPI_TalonSRX(Variables.shooterMotorTopPort);
-        bottomShooter = new WPI_TalonSRX(Variables.shooterMotorBottomPort);
 
-        // backLeft.setInverted(true);
-        // backRight.setInverted(true);
+        shooterTop = new WPI_TalonSRX(Variables.shooterMotorTopPort);
+        shooterBottom = new WPI_TalonSRX(Variables.shooterMotorBottomPort);
+
+        winchMotor = new WPI_TalonSRX(Variables.winchMotorPort);
+
+
+        backLeft.setInverted(true);
+        backRight.setInverted(true);
 
         mDrive = new MecanumDrive(frontLeft, backLeft, frontRight, backRight);
         mDrive.setSafetyEnabled(false);
-
+        
         limeTable = NetworkTableInstance.getDefault().getTable("limelight");
 
         // PID Setup
@@ -98,10 +95,6 @@ public class DriveTrain {
         pid_z.setSetpoint(0);
 
         crossedLine = false;
-
-        beamIntake = new DigitalInput(0);
-        beamIndex = new DigitalInput(0);
-
     }
 
     public void mecDrive(Joystick j) {
@@ -115,6 +108,14 @@ public class DriveTrain {
     public void fullStop() {
         mDrive.driveCartesian(0, 0, 0);
     }
+
+    // private double convertToUnitsPer100ms(double rpm){
+    //     // This function converts RPM to the unit, called "unit," that the motors use.
+    //     double unitsPerMinute = (rpm * 2048);
+    //     double unitsPer100 = unitsPerMinute / 600;
+    //     return unitsPer100;
+    //  }
+
 
     public void targetGoal(Joystick joy, int option) {
         tv = limeTable.getEntry("tv").getDouble(0);
@@ -254,47 +255,30 @@ public class DriveTrain {
         crossedLine = true;
         fullStop();
 
+        
     }
 
     public void setShooting(boolean value) {
         shooting = value;
-    }   
+    }
 
-    private double convertToUnitsPer100ms(double rpm){
-         // This function converts RPM to the unit, called "unit," that the motors use.
+    public void putDistance(double height, double angle) {
+        SmartDashboard.putNumber("Distance", (104-height)*((Math.sin(90-angle)/Math.sin(angle))));
+    }
+
+
+    public double convertToUnitsPer100ms(double rpm){
+        // This function converts RPM to the unit, called "unit," that the motors use.
         double unitsPerMinute = (rpm * 2048);
         double unitsPer100 = unitsPerMinute / 600;
         return unitsPer100;
      }
 
-    public void shoot(int distance) {       
-        double topMotorSpeed = distance / 100;
-        double bottomMotorSpeed = distance / 100;
-        topShooter.set(topMotorSpeed);
-        bottomShooter.set(bottomMotorSpeed);
+    public void shoot(int rpm) {
+        // shooterBottom.set(convertToUnitsPer100ms(rpm));
+        shooterTop.set(rpm);
     }
 
-    public void shooterStop() {
-        topShooter.set(0);
-        bottomShooter.set(0);
-    }
-
-// This code dosent actually work. 
-    public void intake(Joystick j){
-        if (j.getRawButton(2)){
-            intakeM.set(speed);
-            beam();
-        }
-    }
-     // till ball gets into positon
-        //enter values and stuff once the robot is complete 
     
-    public void beam(){
-        if(!beamIntake.get()){
-            intakeM.set(speed);
-        }
-        if(beamIndex.get()){
-            indexM.set(0);
-        }
-    }
+
 }

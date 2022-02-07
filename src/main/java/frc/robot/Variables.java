@@ -3,18 +3,23 @@ package frc.robot;
 public class Variables {
 
     // Motor Ports
-    public static final int frontLeftMotorPort = 1;
-    public static final int frontRightMotorPort = 4;
-    public static final int backLeftMotorPort = 2;
-    public static final int backRightMotorPort = 3;
+    public static final int frontLeftMotorPort = 2;
+    public static final int frontRightMotorPort = 3;
+    public static final int backLeftMotorPort = 1;
+    public static final int backRightMotorPort = 0;
 
     public static final int conveyorMotorPort = 10;
     public static final int feedMotorPort = 13;
-    public static final int shooterMotorTopPort = 5;
-    public static final int shooterMotorBottomPort = 6;
+
+    public static final int shooterMotorTopPort = 6;
+    public static final int shooterMotorBottomPort = 7;
+
+    public static final int winchMotorPort = 5;
+
+
+    // public static final int shooterMotorBottomPort = 3;
 
     public static final int intakeMotorOnePort = 9;
-    public static final int indexMotorOnePort = 8;
 
     public static final int controlMotorPort = 11;
 

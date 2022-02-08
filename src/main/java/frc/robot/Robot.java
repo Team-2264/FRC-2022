@@ -8,10 +8,12 @@ import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.Joystick;
+import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.networktables.*;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
+import edu.wpi.first.wpilibj.AnalogInput;
 
 import edu.wpi.first.cscore.VideoSink;
 
@@ -25,7 +27,7 @@ import edu.wpi.first.cscore.VideoSink;
  */
 public class Robot extends TimedRobot {
 
-  double ty, tx, tv, ta, ts, zAdjust, uAdjust, integralZ, priorI, derivZ, priorEZ, d, height, angle, offset;
+  double ty, tx, tv, ta, ts, zAdjust, uAdjust, integralZ, priorI, derivZ, priorEZ, d, height, angle, offset, voltageScaleFactor;
 
 
   private static final String kDefaultAuto = "Default";
@@ -34,10 +36,12 @@ public class Robot extends TimedRobot {
   private final SendableChooser<String> m_chooser = new SendableChooser<>();
 
   public DriveTrain dt;
+  public Shooter sh;
 
   public Joystick j;
 
   public NetworkTable limeTable;
+  AnalogInput us;
 
   VideoSink server;
 
@@ -53,18 +57,18 @@ public class Robot extends TimedRobot {
     SmartDashboard.putNumber("Auto dfasl", 0);
 
     dt = new DriveTrain();
-
+    sh = new Shooter();
     j = new Joystick(0);
 
     d = 0;
 
     limeTable = NetworkTableInstance.getDefault().getTable("limelight");
+    us = new AnalogInput(0);
 
     limeTable.getEntry("stream").setNumber(2.0);
 
     height = 37;
 
-    dt.shooterBottom.setNeutralMode(NeutralMode.Coast);
     
 
   }
@@ -97,6 +101,10 @@ public class Robot extends TimedRobot {
     // m_autoSelected = SmartDashboard.getString("Auto Selector", kDefaultAuto);
     System.out.println("Auto selected: " + m_autoSelected);
 
+
+
+    
+
     // dt.backUp();
 
     
@@ -119,7 +127,7 @@ public class Robot extends TimedRobot {
   /** This function is called once when teleop is enabled. */
   @Override
   public void teleopInit() {
-
+    // sh.autokF();
     SmartDashboard.putNumber("Angle", 44.5);
     SmartDashboard.putNumber("ShooterBottom", 1000);
   }
@@ -136,16 +144,19 @@ public class Robot extends TimedRobot {
     
     
     SmartDashboard.putNumber("Peanuts", ((104-height)*((Math.sin(Math.toRadians(90-angle))/Math.sin(Math.toRadians(angle)))))/12);
-    
+
+    voltageScaleFactor = 5/RobotController.getVoltage5V(); 
+
+    SmartDashboard.putNumber("Ultrasonic (Inches)", us.getValue() * voltageScaleFactor * 0.0492);
     // SHOOTER
-    SmartDashboard.putNumber("ShooterBottomVel", ((int) dt.shooterBottom.getSelectedSensorVelocity() * 600)/2048);
+    SmartDashboard.putNumber("ShooterBottomVel", ((int) sh.shooterBottom.getSelectedSensorVelocity() * 600)/2048);
     SmartDashboard.putNumber("ShooterBottom2", SmartDashboard.getNumber("ShooterBottom", -1));
 
     if(j.getRawButton(1)) {
-      dt.shooterBottom.set(ControlMode.Velocity, dt.convertToUnitsPer100ms(SmartDashboard.getNumber("ShooterBottom", 0)));
+      sh.shooterBottom.set(ControlMode.Velocity, dt.convertToUnitsPer100ms(SmartDashboard.getNumber("ShooterBottom", 0)));
     } 
     else {
-      dt.shooterBottom.set(0);
+      sh.shooterBottom.set(0);
     }
 
     // WINCH

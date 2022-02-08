@@ -12,9 +12,9 @@ public class Variables {
     public static final int feedMotorPort = 13;
 
     public static final int shooterMotorTopPort = 6;
-    public static final int shooterMotorBottomPort = 7;
+    public static final int shooterMotorBottomPort = 5;
 
-    public static final int winchMotorPort = 5;
+    public static final int winchMotorPort = 7;
 
 
     // public static final int shooterMotorBottomPort = 3;
@@ -31,6 +31,15 @@ public class Variables {
     // Climbing Motor Speeds
 
     // Shooter and Control Panel speeds
+    public static final double shooterBottom_kP = 0.15;
+    public static final double shooterBottom_kI = 0;
+    public static final double shooterBottom_kD = 0;
+    public static final double shooterBottom_kF = 0.0479;
+
+    public static final double shooterTop_kP = 0.15;
+    public static final double shooterTop_kI = 0;
+    public static final double shooterTop_kD = 0;
+    public static final double shooterTop_kF = 0.0479;
    
 
     // Sensor Ports

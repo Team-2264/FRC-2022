@@ -41,8 +41,7 @@ public class DriveTrain {
     WPI_TalonSRX frontLeft;
     WPI_TalonSRX frontRight;
     
-    WPI_TalonSRX shooterTop;
-    WPI_TalonSRX shooterBottom;
+    
     WPI_TalonSRX winchMotor;
 
     PIDController pid_x = new PIDController(kP_x, kI_x, kD_x);
@@ -72,8 +71,7 @@ public class DriveTrain {
         backLeft = new WPI_TalonSRX(Variables.backLeftMotorPort);
 
 
-        shooterTop = new WPI_TalonSRX(Variables.shooterMotorTopPort);
-        shooterBottom = new WPI_TalonSRX(Variables.shooterMotorBottomPort);
+        
 
         winchMotor = new WPI_TalonSRX(Variables.winchMotorPort);
 
@@ -93,6 +91,8 @@ public class DriveTrain {
         pid_y.setSetpoint(0);
         pid_z.setTolerance(1);
         pid_z.setSetpoint(0);
+
+        
 
         crossedLine = false;
     }
@@ -274,10 +274,6 @@ public class DriveTrain {
         return unitsPer100;
      }
 
-    public void shoot(int rpm) {
-        // shooterBottom.set(convertToUnitsPer100ms(rpm));
-        shooterTop.set(rpm);
-    }
 
     
 

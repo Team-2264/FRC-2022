@@ -18,6 +18,7 @@ public class Robot extends TimedRobot {
   public DriveTrain dt;
   public Shooter sh;
   public Sensors se;
+  public Intake in;
 
   public Joystick j;
 
@@ -31,7 +32,11 @@ public class Robot extends TimedRobot {
     dt = new DriveTrain();
     sh = new Shooter();
     se = new Sensors();
+    in = new Intake();
+    
     j = new Joystick(0);
+
+    se.smartdashboardSensorsInit();
   }
 
   /**
@@ -43,7 +48,7 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void robotPeriodic() {
-    se.updateLimelight();
+    se.updateSensorsPlaceNumbers();
   }
 
   /**
@@ -59,34 +64,46 @@ public class Robot extends TimedRobot {
   @Override
   public void autonomousInit() {
     dt.backUp();
+    
   }
 
   /** This function is called periodically during autonomous. */
   @Override
   public void autonomousPeriodic() {
-
+    
   }
 
   /** This function is called once when teleop is enabled. */
   @Override
   public void teleopInit() {
     sh.smartdashboardShooterInit();
-    se.smartdashboardSensorsInit();
   }
 
   /** This function is called periodically during operator control. */
   @Override
   public void teleopPeriodic() {
     dt.mecDrive(j);  
-    se.updateSensorsPlaceNumbers();
+    
     sh.updateShooterMotorSpeeds();
     
-    if(j.getRawButton(1)) {
+    if(j.getRawButton(3)) {
       sh.manualShoot();
     } else {
       if(sh.isShooting()) {
         sh.stopShoot();
       }
+    }
+
+    if(j.getRawButton(1)) {
+      if(dt.alignSelf()) {
+        sh.smartShoot(se.calcDistance());
+      } 
+    }
+
+    if(j.getRawButton(2)) {
+      if(dt.alignSelf()) {
+        sh.smartShoot(se.calcDistance());
+      } 
     }
 
   }

@@ -88,4 +88,12 @@ public class DriveTrain {
         fullStop();
     }
 
+
+
+    public boolean alignSelf() {
+        // if tx is > than 0, turn right. if tx is < than 0, turn left. if tx is within acceptable threshold, don't move and return true
+        // Have some kind of visual indicater
+        return true;
+    }
+
 }

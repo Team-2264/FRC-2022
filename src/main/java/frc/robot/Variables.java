@@ -27,9 +27,11 @@ public class Variables {
     public static final double shooterTop_kD = 0;
     public static final double shooterTop_kF = 0.0479;
    
-    // Sensor
+    // Sensors
 
     public static final int ultrasonicPort = 0;
+    public static final int beamBreakOnePort = 0;
+    public static final int beamBreakTwoPort = 1;
     
     // Height and Angle
 

@@ -3,32 +3,18 @@ package frc.robot;
 public class Variables {
 
     // Motor Ports
-    public static final int frontLeftMotorPort = 2;
+    public static final int frontLeftMotorPort = 4;
     public static final int frontRightMotorPort = 3;
-    public static final int backLeftMotorPort = 1;
-    public static final int backRightMotorPort = 0;
-
-    public static final int conveyorMotorPort = 10;
-    public static final int feedMotorPort = 13;
+    public static final int backLeftMotorPort = 2;
+    public static final int backRightMotorPort = 1;
 
     public static final int shooterMotorTopPort = 6;
     public static final int shooterMotorBottomPort = 5;
 
-    public static final int winchMotorPort = 7;
+    public static final int intakeMotorPort = 7;
+    public static final int indexMotorPort = 8;
 
-
-    // public static final int shooterMotorBottomPort = 3;
-
-    public static final int intakeMotorOnePort = 9;
-
-    public static final int controlMotorPort = 11;
-
-    // Index Speed Amounts
-    public static final double intakeMotorSpeed = -0.55;
-    public static final double conveyorIndexSpeed = 0.90;
-    public static final double feedIndexSpeed = 1.0;
-
-    // Climbing Motor Speeds
+    public static final int climbingMotorPort = 9;
 
     // Shooter and Control Panel speeds
     public static final double shooterBottom_kP = 0.15;
@@ -41,11 +27,13 @@ public class Variables {
     public static final double shooterTop_kD = 0;
     public static final double shooterTop_kF = 0.0479;
    
+    // Sensor
 
-    // Sensor Ports
+    public static final int ultrasonicPort = 0;
     
+    // Height and Angle
 
-    // Shooter Control Loop Voltages
-
+    public static final double height = 37;
+    public static final double offset = 44.5;
 
 }

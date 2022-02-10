@@ -94,13 +94,21 @@ public class Robot extends TimedRobot {
       }
     }
 
-    if(j.getRawButton(1)) {
-      if(dt.alignSelf()) {
-        sh.smartShoot(se.calcDistance());
-      } 
+    if(j.getRawButton(5)){
+      in.runIntake();
+    }
+    else{
+      in.stopIntake();
     }
 
-    if(j.getRawButton(2)) {
+    if(j.getRawButton(6)){
+      in.manualIndex();
+    }
+    else{
+      in.stopManualIndex();
+    }
+
+    if(j.getRawButton(1)) {
       if(dt.alignSelf()) {
         sh.smartShoot(se.calcDistance());
       } 

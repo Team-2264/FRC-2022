@@ -110,5 +110,9 @@ public class Sensors {
         SmartDashboard.putBoolean("Beam Two", beamsBroken[1]);
     }
 
+    public void updateBallCount(int balls){
+        SmartDashboard.putNumber("Balls In System", balls);
+    }
+
     
 }

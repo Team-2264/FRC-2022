@@ -185,5 +185,9 @@ public class Sensors {
         SmartDashboard.putNumber("UltraSonic Distance (in)", usDistance);
     }
 
+    public void updateBallCount(int balls){
+        SmartDashboard.putNumber("Balls In System", balls);
+    }
+
     
 }

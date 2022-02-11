@@ -132,8 +132,19 @@ public class Robot extends TimedRobot {
     //   indexMotor.set(ControlMode.Velocity, ((int) (1000) * 600)/2048);
     // }
 
+    if(j.getRawButton(5)){
+      in.runIntake();
+    }
+    else{
+      in.stopIntake();
+    }
 
-    
+    if(j.getRawButton(6)){
+      in.manualIndex();
+    }
+    else{
+      in.stopManualIndex();
+    }
 
   }
 

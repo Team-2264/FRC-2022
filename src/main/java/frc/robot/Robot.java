@@ -6,6 +6,11 @@ package frc.robot;
 
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.Joystick;
+import com.ctre.phoenix.motorcontrol.ControlMode;
+import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
+import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
+
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 /**
  * The VM is configured to automatically run this class, and to call the functions corresponding to
@@ -16,11 +21,15 @@ import edu.wpi.first.wpilibj.Joystick;
 public class Robot extends TimedRobot {
 
   public DriveTrain dt;
-  public Shooter sh;
-  public Sensors se;
-  public Intake in;
+  // public Shooter sh;
+  // public Sensors se;
+  // public Intake in;
+  // public Climbing cl;
+  public Test ts;
 
   public Joystick j;
+
+  public WPI_TalonSRX indexMotor;
 
 
   /**
@@ -29,14 +38,19 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void robotInit() {
-    dt = new DriveTrain();
-    sh = new Shooter();
-    se = new Sensors();
-    in = new Intake();
+
+    // dt = new DriveTrain();
+    // sh = new Shooter();
+    // se = new Sensors();
+    // in = new Intake();
+    // cl = new Climbing();
+    
     
     j = new Joystick(0);
 
-    se.smartdashboardSensorsInit();
+    // se.smartdashboardSensorsInit();
+
+    // se.cameraInit();
   }
 
   /**
@@ -48,7 +62,6 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void robotPeriodic() {
-    se.updateSensorsPlaceNumbers();
   }
 
   /**
@@ -63,7 +76,7 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void autonomousInit() {
-    dt.backUp();
+    // dt.backUp();
     
   }
 
@@ -76,41 +89,59 @@ public class Robot extends TimedRobot {
   /** This function is called once when teleop is enabled. */
   @Override
   public void teleopInit() {
-    sh.smartdashboardShooterInit();
+    // sh.smartdashboardShooterInit();
   }
 
   /** This function is called periodically during operator control. */
   @Override
   public void teleopPeriodic() {
-    dt.mecDrive(j);  
-    
-    sh.updateShooterMotorSpeeds();
-    
-    if(j.getRawButton(3)) {
-      sh.manualShoot();
-    } else {
-      if(sh.isShooting()) {
-        sh.stopShoot();
-      }
-    }
 
-    if(j.getRawButton(1)) {
-      if(dt.alignSelf()) {
-        sh.smartShoot(se.calcDistance());
-      } 
-    }
 
-    if(j.getRawButton(2)) {
-      if(dt.alignSelf()) {
-        sh.smartShoot(se.calcDistance());
-      } 
-    }
+    // se.updateSensorsPlaceNumbers();
+    // sh.updateShooterMotorSpeeds();
+
+    // dt.mecDrive(j); 
+
+    // Shooting
+
+    // Manual Shoot
+    
+    // if(j.getRawButton(1)) {
+    //   sh.manualShoot();
+    // } else {
+    //   sh.stopShoot();
+    // }
+
+    // Smart Shoot
+    // if(j.getRawButton(1)) {
+    //   if(dt.alignSelf(se)) {
+    //     sh.smartShoot(se.calcDistance());
+    //   } 
+    // } else {
+    //   if(dt.aligning) {
+    //     dt.fullStop();
+    //   }
+    //   if(sh.isShooting()) {
+    //     sh.stopShoot();
+    //   }
+    // }
+
+    // Intake
+
+    // if(j.getRawButton(1)) {
+    //   indexMotor.set(ControlMode.Velocity, ((int) (1000) * 600)/2048);
+    // }
+
+
+    
 
   }
 
   /** This function is called once when the robot is disabled. */
   @Override
-  public void disabledInit() {}
+  public void disabledInit() {
+    // se.closeUltrasonic();
+  }
 
   /** This function is called periodically when disabled. */
   @Override
@@ -118,9 +149,14 @@ public class Robot extends TimedRobot {
 
   /** This function is called once when test mode is enabled. */
   @Override
-  public void testInit() {}
+  public void testInit() {
+    ts = new Test();
+    ts.smartdashboardInit();
+  }
 
   /** This function is called periodically during test mode. */
   @Override
-  public void testPeriodic() {}
+  public void testPeriodic() {
+    ts.callPeriodic(j);
+  }
 }

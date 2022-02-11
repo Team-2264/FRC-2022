@@ -9,6 +9,7 @@ import edu.wpi.first.wpilibj.drive.MecanumDrive;
 public class DriveTrain {
 
     public boolean crossedLine;
+    public boolean aligning;
 
     final double kP_z = 0.009;
     final double kF_z = 0.1;
@@ -41,13 +42,15 @@ public class DriveTrain {
     MecanumDrive mDrive;
 
     public DriveTrain() {
+        aligning = false;
+        crossedLine = false;
 
         frontLeft = new WPI_TalonSRX(Variables.frontLeftMotorPort);
         frontRight = new WPI_TalonSRX(Variables.frontRightMotorPort);
         backRight = new WPI_TalonSRX(Variables.backRightMotorPort);
         backLeft = new WPI_TalonSRX(Variables.backLeftMotorPort);
 
-        backLeft.setInverted(true);
+        frontRight.setInverted(true);
         backRight.setInverted(true);
 
         mDrive = new MecanumDrive(frontLeft, backLeft, frontRight, backRight);
@@ -60,12 +63,10 @@ public class DriveTrain {
         pid_y.setSetpoint(0);
         pid_z.setTolerance(1);
         pid_z.setSetpoint(0);
-
-        crossedLine = false;
     }
 
     public void mecDrive(Joystick j) {
-        mDrive.driveCartesian(0.8 * j.getX(), -0.7 * j.getY(), 0.7 * j.getZ());
+        mDrive.driveCartesian(-0.8*j.getY(), 0.5 * j.getX(), 0.7 * j.getZ());
     }
 
     public void drive(double x, double y, double z) {
@@ -73,6 +74,7 @@ public class DriveTrain {
     }
 
     public void fullStop() {
+        aligning = false;
         mDrive.driveCartesian(0, 0, 0);
     }
 
@@ -90,10 +92,19 @@ public class DriveTrain {
 
 
 
-    public boolean alignSelf() {
-        // if tx is > than 0, turn right. if tx is < than 0, turn left. if tx is within acceptable threshold, don't move and return true
-        // Have some kind of visual indicater
-        return true;
+    public boolean alignSelf(Sensors se) {
+        if(Math.abs(se.getTX()) < Variables.tXthreshold) {
+            aligning = false;
+            return true;
+        } else {
+            aligning = true;
+            if(se.getTX() > 0) {
+                // Turn Left
+            } else {
+                // Turn Right
+            }
+            return false;
+        }
     }
 
 }

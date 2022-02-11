@@ -1,21 +1,27 @@
 package frc.robot;
 
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
+import com.ctre.phoenix.motorcontrol.can.TalonFX;
+import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
 
+import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+
+
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
 
 public class Shooter {
     
-    WPI_TalonSRX shooterTop;
-    WPI_TalonSRX shooterBottom;
+    WPI_TalonFX shooterTop;
+    WPI_TalonFX shooterBottom;
 
-    boolean shooting;
+    boolean manualShooting;
+    boolean smartShooting;
 
     public Shooter() {
-        shooterTop = new WPI_TalonSRX(Variables.shooterMotorTopPort);
-        shooterBottom = new WPI_TalonSRX(Variables.shooterMotorBottomPort);
+        shooterTop = new WPI_TalonFX(Variables.shooterMotorTopPort);
+        shooterBottom = new WPI_TalonFX(Variables.shooterMotorBottomPort);
 
         shooterBottom.configFactoryDefault();
         shooterBottom.config_kP(0, Variables.shooterBottom_kP);
@@ -29,7 +35,8 @@ public class Shooter {
         shooterTop.config_kD(0, Variables.shooterTop_kD);
         shooterTop.config_kF(0, Variables.shooterTop_kF);
 
-        shooting = false;
+        manualShooting = false;
+        smartShooting = false;
     }
 
     // SMARTDASHBOARD SETUP
@@ -52,21 +59,27 @@ public class Shooter {
     public void manualShoot() {
         shooterBottom.set(ControlMode.Velocity, convertToUnitsPer100ms(SmartDashboard.getNumber("ShooterBottom", 0)));
         shooterTop.set(ControlMode.Velocity, convertToUnitsPer100ms(SmartDashboard.getNumber("ShooterTop", 0)));
-        shooting = true;
+        manualShooting = true;
     }
 
     public void smartShoot(double distance) {
-        shooting = true;
+        smartShooting = true;
     }
 
     public void stopShoot() {
-        shooterBottom.set(ControlMode.Velocity, 0);
-        shooterTop.set(ControlMode.Velocity, 0);
-        shooting = false;
+        shooterBottom.set(ControlMode.PercentOutput, 0);
+        shooterTop.set(ControlMode.PercentOutput, 0);
+
+        smartShooting = false;
+        manualShooting = false;
     }
 
-    public boolean isShooting() {
-        return shooting;
+    public boolean isMShooting() {
+        return manualShooting;
+    }
+
+    public boolean isSShooting() {
+        return smartShooting;
     }
 
     // PID CODE
@@ -140,7 +153,7 @@ public class Shooter {
 
     // MISC
 
-    private double convertToUnitsPer100ms(double rpm) {
+    public double convertToUnitsPer100ms(double rpm) {
         // This function converts RPM to the unit, called "unit," that the motors use.
         double unitsPerMinute = (rpm * 2048);
         double unitsPer100 = unitsPerMinute / 600;
@@ -150,6 +163,11 @@ public class Shooter {
     private double convertToRPM(double input) {
         // This function converts the unit, called "unit," that the motors use into RPM.
         return ((int) input * 600)/2048;
+    }
+
+    private void sliderUpdate(Joystick j) {
+        SmartDashboard.putNumber("ShooterBottom", 1000);
+        SmartDashboard.putNumber("ShooterTop", 1000);
     }
 
       

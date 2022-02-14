@@ -3,11 +3,13 @@ package frc.robot;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 
+import com.ctre.phoenix.motorcontrol.ControlMode;
+
 public class Intake {
 
     Sensors sensors;
-    WPI_TalonSRX intakeMotor;
-    WPI_TalonFX indexMotor;
+    WPI_TalonFX intakeMotor;
+    WPI_TalonSRX indexMotor;
     int ballsIn;
 
     public Intake() {
@@ -66,9 +68,6 @@ public class Intake {
     }
 
     // make a function that works with shooter. to move the index motor and clear bb2 and move ball from bb1 to bb2
-    public void updateSensors(){
-        sensors.updateBeamBreaks();
-    }
 
     // Put the number of currrent balls on the smartdashboard
     
@@ -84,5 +83,7 @@ public class Intake {
         // This function converts the unit, called "unit," that the motors use into RPM.
         return ((int) input * 600)/2048;
     }
+
+    
 
 }

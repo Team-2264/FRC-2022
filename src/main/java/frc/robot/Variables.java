@@ -20,12 +20,12 @@ public class Variables {
     public static final double shooterBottom_kP = 0.15;
     public static final double shooterBottom_kI = 0.0;
     public static final double shooterBottom_kD = 0;
-    public static final double shooterBottom_kF = 0.0461;
+    public static final double shooterBottom_kF = 0.0463;
 
     public static final double shooterTop_kP = 0.15;
     public static final double shooterTop_kI = 0.0;
     public static final double shooterTop_kD = 0;
-    public static final double shooterTop_kF = 0.0461;
+    public static final double shooterTop_kF = 0.0463;
    
     // Sensors
 

@@ -19,7 +19,7 @@ public class Shooter {
     boolean manualShooting;
     boolean smartShooting;
 
-    public Shooter() {
+    public Shooter() {  
         shooterTop = new WPI_TalonFX(Variables.shooterMotorTopPort);
         shooterBottom = new WPI_TalonFX(Variables.shooterMotorBottomPort);
 
@@ -37,14 +37,18 @@ public class Shooter {
 
         manualShooting = false;
         smartShooting = false;
+
+        shooterTop.setInverted(true);
+        shooterBottom.setInverted(true);
+
     }
 
     // SMARTDASHBOARD SETUP
 
     public void smartdashboardShooterInit() {
-        SmartDashboard.putNumber("ShooterBottom", 1000);
+        SmartDashboard.putNumber("ShooterBottom", 500);
         SmartDashboard.putNumber("ShooterBottomVel", 0);
-        SmartDashboard.putNumber("ShooterTop", 1000);
+        SmartDashboard.putNumber("ShooterTop", 500);
         SmartDashboard.putNumber("ShooterTopVel", 0);
     }
 
@@ -58,7 +62,14 @@ public class Shooter {
 
     public void manualShoot() {
         shooterBottom.set(ControlMode.Velocity, convertToUnitsPer100ms(SmartDashboard.getNumber("ShooterBottom", 0)));
-        shooterTop.set(ControlMode.Velocity, convertToUnitsPer100ms(SmartDashboard.getNumber("ShooterTop", 0)));
+        shooterTop.set(ControlMode.Velocity, -1 * convertToUnitsPer100ms(SmartDashboard.getNumber("ShooterTop", 0)));
+        manualShooting = true;
+    }
+
+    public void manualShootReverse() {
+        shooterBottom.set(ControlMode.Velocity,  
+        convertToUnitsPer100ms(SmartDashboard.getNumber("ShooterBottom", 0)));
+        shooterTop.set(ControlMode.Velocity, -1 * convertToUnitsPer100ms(SmartDashboard.getNumber("ShooterTop", 0)));
         manualShooting = true;
     }
 

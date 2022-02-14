@@ -21,7 +21,9 @@ public class Test {
     public Test() {
 
         portsFX = new int[0];
-        portsSRX = new int[0];
+        portsSRX = new int[1];
+
+        portsSRX[0] = 8;
 
         fx = new WPI_TalonFX[portsFX.length];
         srx = new WPI_TalonSRX[portsSRX.length];
@@ -32,6 +34,11 @@ public class Test {
 
         for(int i = 0; i < portsSRX.length; i++) {
             srx[i] = new WPI_TalonSRX(portsSRX[i]);
+            srx[i].configFactoryDefault();
+            srx[i].config_kP(0, Variables.shooterTop_kP);
+            srx[i].config_kI(0, Variables.shooterTop_kI);
+            srx[i].config_kD(0, Variables.shooterTop_kD);
+            srx[i].config_kF(0, Variables.shooterTop_kF);
         }
 
     }
@@ -44,22 +51,54 @@ public class Test {
 
         for(int i = 0; i < srx.length; i++) {
             SmartDashboard.putNumber("Test SRX" + portsSRX[i], 1000);
-            SmartDashboard.putNumber("Test SRX Vel" + portsFX[i], 0);
+            SmartDashboard.putNumber("Test SRX Vel" + portsSRX[i], 0);
         }
     }
 
     public void callPeriodic(Joystick j) {
-        for(int i = 0; i < fx.length; i++) {
-            if(j.getRawButton(portsFX[i])) {
-                fx[i].set(ControlMode.Velocity, SmartDashboard.getNumber("Test FX" + i, 1000));
-            }
-        }
 
-        for(int i = 0; i < srx.length; i++) {
-            if(j.getRawButton(portsSRX[i])) {
-                srx[i].set(ControlMode.Velocity, SmartDashboard.getNumber("Test SRX" + i, 1000));
-            }
+        if(j.getRawButton(4)) {
+            srx[0].set(ControlMode.Velocity, 5000);
+        } else if(j.getRawButton(5)) {
+            srx[0].set(ControlMode.Velocity, -5000);
+        } else {
+            srx[0].set(ControlMode.Velocity, 0);
         }
+        
 
+        SmartDashboard.putBoolean("called", false);
+        // for(int i = 0; i < fx.length; i++) {
+        //     if(j.getRawButton(4)) {
+        //         SmartDashboard.putBoolean("called", true);
+        //         fx[i].set(ControlMode.Velocity, SmartDashboard.getNumber("Test FX" + portsFX[i], 1000));
+        //     } else {
+        //         fx[i].set(ControlMode.Velocity, 0);
+
+        //     }
+        //     SmartDashboard.putNumber("Test FX Vel" + portsFX[i], convertToRPM(fx[i].getSelectedSensorVelocity()));
+        // }
+
+        // for(int i = 0; i < srx.length; i++) {
+        //     if(j.getRawButton(portsSRX[i])) {
+        //         srx[i].set(ControlMode.Velocity, SmartDashboard.getNumber("Test SRX" + portsSRX[i], 1000));
+        //     } else {
+        //         srx[i].set(ControlMode.Velocity, 0);
+        //     }
+        //     SmartDashboard.putNumber("Test SRX Vel" + portsSRX[i], convertToRPM(srx[i].getSelectedSensorVelocity()));
+        // }
     }
+
+
+    public double convertToUnitsPer100ms(double rpm) {
+        // This function converts RPM to the unit, called "unit," that the motors use.
+        double unitsPerMinute = (rpm * 2048);
+        double unitsPer100 = unitsPerMinute / 600;
+        return unitsPer100;
+    }
+
+    private double convertToRPM(double input) {
+        // This function converts the unit, called "unit," that the motors use into RPM.
+        return ((int) input * 600)/2048;
+    }
+
 }

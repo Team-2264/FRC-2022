@@ -20,8 +20,8 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
  */
 public class Robot extends TimedRobot {
 
-  public DriveTrain dt;
-  // public Shooter sh;
+  // public DriveTrain dt;
+  public Shooter sh;
   // public Sensors se;
   // public Intake in;
   // public Climbing cl;
@@ -40,7 +40,7 @@ public class Robot extends TimedRobot {
   public void robotInit() {
 
     // dt = new DriveTrain();
-    // sh = new Shooter();
+    sh = new Shooter();
     // se = new Sensors();
     // in = new Intake();
     // cl = new Climbing();
@@ -49,6 +49,14 @@ public class Robot extends TimedRobot {
     j = new Joystick(0);
 
     // se.smartdashboardSensorsInit();
+
+    sh.smartdashboardShooterInit();
+
+    SmartDashboard.putNumber("peanuts", 100);
+
+    ts = new Test();
+    ts.smartdashboardInit();
+
 
     // se.cameraInit();
   }
@@ -89,16 +97,17 @@ public class Robot extends TimedRobot {
   /** This function is called once when teleop is enabled. */
   @Override
   public void teleopInit() {
-    // sh.smartdashboardShooterInit();
+    // sh.autokF();
   }
 
   /** This function is called periodically during operator control. */
   @Override
   public void teleopPeriodic() {
 
+    
 
     // se.updateSensorsPlaceNumbers();
-    // sh.updateShooterMotorSpeeds();
+    sh.updateShooterMotorSpeeds();
 
     // dt.mecDrive(j); 
 
@@ -106,11 +115,18 @@ public class Robot extends TimedRobot {
 
     // Manual Shoot
     
-    // if(j.getRawButton(1)) {
-    //   sh.manualShoot();
-    // } else {
-    //   sh.stopShoot();
-    // }
+    if(j.getRawButton(1) || j.getRawButton(2)) {
+      if(j.getRawButton(1)) {
+        sh.manualShoot();
+      } else if (j.getRawButton(2)) {
+        sh.manualShootReverse();
+      }
+    } else {
+      sh.stopShoot();
+    }
+    
+    ts.callPeriodic(j);
+
 
     // Smart Shoot
     // if(j.getRawButton(1)) {
@@ -128,23 +144,19 @@ public class Robot extends TimedRobot {
 
     // Intake
 
-    // if(j.getRawButton(1)) {
-    //   indexMotor.set(ControlMode.Velocity, ((int) (1000) * 600)/2048);
+    // if(j.getRawButton(5)){
+    //   in.runIntake();
+    // }
+    // else{
+    //   in.stopIntake();
     // }
 
-    if(j.getRawButton(5)){
-      in.runIntake();
-    }
-    else{
-      in.stopIntake();
-    }
-
-    if(j.getRawButton(6)){
-      in.manualIndex();
-    }
-    else{
-      in.stopManualIndex();
-    }
+    // if(j.getRawButton(6)){
+    //   in.manualIndex();
+    // }
+    // else{
+    //   in.stopManualIndex();
+    // }
 
   }
 

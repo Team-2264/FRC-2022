@@ -66,7 +66,7 @@ public class DriveTrain {
     }
 
     public void mecDrive(Joystick j) {
-        mDrive.driveCartesian(-0.8*j.getY(), 0.5 * j.getX(), 0.7 * j.getZ());
+        mDrive.driveCartesian(-0.4*j.getY(), 0.25 * j.getX(), 0.35 * j.getZ());
     }
 
     public void drive(double x, double y, double z) {
@@ -90,7 +90,13 @@ public class DriveTrain {
         fullStop();
     }
 
+    public void driveForward() {
+        mDrive.driveCartesian(-.25, 0, 0);
+    }
 
+    public void driveBackward() {
+        mDrive.driveCartesian(.25, 0, 0);
+    }
 
     public boolean alignSelf(Sensors se) {
         if(Math.abs(se.getTX()) < Variables.tXthreshold) {

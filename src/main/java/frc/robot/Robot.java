@@ -12,6 +12,10 @@ import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
+import edu.wpi.first.networktables.NetworkTable;
+import edu.wpi.first.networktables.NetworkTableInstance;
+import edu.wpi.first.networktables.NetworkTableEntry;
+
 /**
  * The VM is configured to automatically run this class, and to call the functions corresponding to
  * each mode, as described in the TimedRobot documentation. If you change the name of this class or
@@ -21,7 +25,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 public class Robot extends TimedRobot {
 
   // public DriveTrain dt;
-  public Shooter sh;
+  // public Shooter sh;
   // public Sensors se;
   // public Intake in;
   // public Climbing cl;
@@ -29,7 +33,10 @@ public class Robot extends TimedRobot {
 
   public Joystick j;
 
-  public WPI_TalonSRX indexMotor;
+  NetworkTable table;
+
+  NetworkTableEntry xEntry;
+  NetworkTableEntry yEntry;
 
 
   /**
@@ -40,7 +47,7 @@ public class Robot extends TimedRobot {
   public void robotInit() {
 
     // dt = new DriveTrain();
-    sh = new Shooter();
+    // sh = new Shooter();
     // se = new Sensors();
     // in = new Intake();
     // cl = new Climbing();
@@ -50,15 +57,17 @@ public class Robot extends TimedRobot {
 
     // se.smartdashboardSensorsInit();
 
-    sh.smartdashboardShooterInit();
-
-    SmartDashboard.putNumber("peanuts", 100);
-
-    ts = new Test();
-    ts.smartdashboardInit();
-
+    // sh.smartdashboardShooterInit();
 
     // se.cameraInit();
+
+    NetworkTableInstance inst = NetworkTableInstance.getDefault();
+
+    table = inst.getTable("Vision");
+
+    xEntry = table.getEntry("target_x");
+    yEntry = table.getEntry("target_y");
+
   }
 
   /**
@@ -104,10 +113,13 @@ public class Robot extends TimedRobot {
   @Override
   public void teleopPeriodic() {
 
-    
+    SmartDashboard.putNumber("X", xEntry.getDouble(1.0));
+    SmartDashboard.putNumber("Y", yEntry.getDouble(1.0));
+
 
     // se.updateSensorsPlaceNumbers();
-    sh.updateShooterMotorSpeeds();
+
+    // sh.updateShooterMotorSpeeds();
 
     // dt.mecDrive(j); 
 
@@ -115,17 +127,36 @@ public class Robot extends TimedRobot {
 
     // Manual Shoot
     
-    if(j.getRawButton(1) || j.getRawButton(2)) {
-      if(j.getRawButton(1)) {
-        sh.manualShoot();
-      } else if (j.getRawButton(2)) {
-        sh.manualShootReverse();
-      }
-    } else {
-      sh.stopShoot();
-    }
+    // if(j.getRawButton(1)) {
+    //   if(j.getRawButton(1)) {
+    //     sh.manualShoot();
+    //   } else if (j.getRawButton(2)) {
+    //     sh.manualShootReverse();
+    //   }
+    // } else {
+    //   sh.stopShoot();
+    // }
+
+    // if(j.getRawButton(2)) {
+    //   in.runIntake();
+    //   SmartDashboard.putBoolean("Cal", true);
+    // } else {
+    //   in.stopIntake();
+    //   SmartDashboard.putBoolean("Cal", false);
+
+    // }
     
-    ts.callPeriodic(j);
+    // if(j.getRawButton(4)) {
+    //   in.runIntake();
+    // } else {
+    //   in.stopIntake();
+    // }
+
+    // if(j.getRawButton(5)) {
+    //   in.runIndex();
+    // } else {
+    //   in.stopIndex();
+    // }
 
 
     // Smart Shoot
@@ -181,5 +212,6 @@ public class Robot extends TimedRobot {
   @Override
   public void testPeriodic() {
     ts.callPeriodic(j);
+    ts.smartdashboardUpdate();
   }
 }

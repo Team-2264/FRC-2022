@@ -20,25 +20,36 @@ public class Test {
 
     public Test() {
 
-        portsFX = new int[0];
-        portsSRX = new int[1];
+        portsFX = new int[1];
+        portsSRX = new int[0];
 
-        portsSRX[0] = 8;
+        portsFX[0] = 9;
 
         fx = new WPI_TalonFX[portsFX.length];
         srx = new WPI_TalonSRX[portsSRX.length];
+
+        for(int i = 0; i < portsSRX.length; i++) {
+            srx[i] = new WPI_TalonSRX(portsSRX[i]);
+        }
 
         for(int i = 0; i < portsFX.length; i++) {
             fx[i] = new WPI_TalonFX(portsFX[i]);
         }
 
         for(int i = 0; i < portsSRX.length; i++) {
-            srx[i] = new WPI_TalonSRX(portsSRX[i]);
             srx[i].configFactoryDefault();
-            srx[i].config_kP(0, Variables.shooterTop_kP);
-            srx[i].config_kI(0, Variables.shooterTop_kI);
-            srx[i].config_kD(0, Variables.shooterTop_kD);
-            srx[i].config_kF(0, Variables.shooterTop_kF);
+            srx[i].config_kP(0, 0);
+            srx[i].config_kI(0, 0);
+            srx[i].config_kD(0, 0);
+            srx[i].config_kF(0, 0);
+        }
+
+        for(int i = 0; i < portsFX.length; i++) {
+            fx[i].configFactoryDefault();
+            fx[i].config_kP(0, 0);
+            fx[i].config_kI(0, 0);
+            fx[i].config_kD(0, 0);
+            fx[i].config_kF(0,  0);
         }
 
     }
@@ -55,14 +66,24 @@ public class Test {
         }
     }
 
+    public void smartdashboardUpdate() {
+        for(int i = 0; i < fx.length; i++) {
+            SmartDashboard.putNumber("Test FX Vel" + portsFX[i], 0);
+        }
+
+        for(int i = 0; i < srx.length; i++) {
+            SmartDashboard.putNumber("Test SRX Vel" + portsSRX[i], 0);
+        }
+    }
+
     public void callPeriodic(Joystick j) {
 
         if(j.getRawButton(4)) {
-            srx[0].set(ControlMode.Velocity, 5000);
+            fx[0].set(ControlMode.Velocity, 4000);
         } else if(j.getRawButton(5)) {
-            srx[0].set(ControlMode.Velocity, -5000);
+            fx[0].set(ControlMode.Velocity, -4000);
         } else {
-            srx[0].set(ControlMode.Velocity, 0);
+            fx[0].set(ControlMode.Velocity, 0);
         }
         
 

@@ -9,25 +9,35 @@ public class Intake {
 
     Sensors sensors;
     WPI_TalonFX intakeMotor;
-    WPI_TalonSRX indexMotor;
+    // WPI_TalonSRX indexMotor;
     int ballsIn;
+    long indexTime;
 
     public Intake() {
         intakeMotor = new WPI_TalonFX(Variables.intakeMotorPort);
-        indexMotor = new WPI_TalonSRX(Variables.indexMotorPort);
+        // indexMotor = new WPI_TalonSRX(Variables.indexMotorPort);
         ballsIn = 0;
     }
 
     public void intake() {
-        indexMotor.set(ControlMode.Velocity, convertToUnitsPer100ms(1000));
+        // intakeMotor.set(ControlMode.Velocity, convertToUnitsPer100ms(3000));
+        // Call indexing code if ball spotted
     }
     // Run motors
     public void runIntake(){
-        intakeMotor.set(convertToUnitsPer100ms(1000));
+        intakeMotor.set(ControlMode.Velocity, convertToUnitsPer100ms(3000));
+    }
+
+    public void runIndex() {
+        // indexMotor.set(ControlMode.Velocity, convertToUnitsPer100ms(-4000));
     }
 
     public void stopIntake(){
-        intakeMotor.set(0);
+        intakeMotor.set(ControlMode.Velocity, 0);
+    }
+
+    public void stopIndex(){
+        // indexMotor.set(ControlMode.Velocity, 0);
     }
 
 
@@ -36,19 +46,15 @@ public class Intake {
 
     public void index(Sensors se){
 
-        if(se.beamsBroken[1]){
-            if(sensors.beamsBroken[0]){
-                indexMotor.set(0);
-                ballsIn++;
-                sensors.updateBallCount(ballsIn);
-            }
-            else{
-                indexMotor.set(convertToUnitsPer100ms(200));
-            }
-        }
-        else{
-            indexMotor.set(convertToUnitsPer100ms(200));
-        }
+        // if(se.getBeamBroken()) {
+        //     indexMotor.set(convertToUnitsPer100ms(200));
+        //     indexTime = System.currentTimeMillis();
+        //     if(System.currentTimeMillis() - indexTime > 2000) {
+        //         indexMotor.set(convertToUnitsPer100ms(0));
+        //     } 
+        // } else{
+        //     indexMotor.set(convertToUnitsPer100ms(200));
+        // }
 
     }
 
@@ -60,11 +66,11 @@ public class Intake {
     // have a special "no-indexing" mode
 
     public void manualIndex(){
-        indexMotor.set(convertToUnitsPer100ms(200));
+        // indexMotor.set(convertToUnitsPer100ms(200));
     }
 
     public void stopManualIndex(){
-        indexMotor.set(0);
+        // indexMotor.set(0);
     }
 
     // make a function that works with shooter. to move the index motor and clear bb2 and move ball from bb1 to bb2

@@ -3,7 +3,7 @@ package frc.robot;
 import edu.wpi.first.networktables.*;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.DigitalInput;
-import edu.wpi.first.wpilibj.Ultrasonic;
+// import edu.wpi.first.wpilibj.Ultrasonic;
 
 import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.cscore.CvSink;

@@ -11,7 +11,6 @@ public class Intake {
     NetworkTable networkTable;
     NetworkTableEntry heading;
     NetworkTableEntry objectAtBottom;
-    NetworkTableEntry objectStatus;
     Sensors sensors;
     WPI_TalonFX intakeMotor;
     // WPI_TalonSRX indexMotor;
@@ -25,15 +24,17 @@ public class Intake {
         NetworkTableInstance instance = NetworkTableInstance.getDefault();
 
         networkTable = instance.getTable("Vision");
+
+        // -1 if ball is to the left, 1 if to the right, 2 if centered, and 0 if not
+        // detected
         heading = networkTable.getEntry("heading");
         objectAtBottom = networkTable.getEntry("bottom");
-        objectStatus = networkTable.getEntry("detection");
 
     }
 
     public boolean alignIntake(DriveTrain dt) {
         Double headingValue = heading.getDouble(0.0);
-        if (headingValue == 0) {
+        if (headingValue == 2) {
             dt.fullStop();
             return true;
         }
@@ -52,7 +53,7 @@ public class Intake {
     }
 
     public boolean objectDetected() {
-        if (objectStatus.getBoolean(false)) {
+        if (heading.getDouble(2) != 0) {
             return true;
         } else {
             return false;

@@ -4,7 +4,7 @@ import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
 import com.ctre.phoenix.motorcontrol.ControlMode;
 
 public class Climbing {
-    
+
     // private WPI_TalonFX leftClimbing;
     private WPI_TalonFX rightClimbing, leftClimbing;
 
@@ -22,7 +22,7 @@ public class Climbing {
         rightClimbing.set(ControlMode.Velocity, convertToUnitsPer100ms(0));
         leftClimbing.set(ControlMode.Velocity, convertToUnitsPer100ms(0));
     }
-// suck my dick 
+    // suck my dick
 
     public double convertToUnitsPer100ms(double rpm) {
         // This function converts RPM to the unit, called "unit," that the motors use.
@@ -33,7 +33,7 @@ public class Climbing {
 
     private double convertToRPM(double input) {
         // This function converts the unit, called "unit," that the motors use into RPM.
-        return ((int) input * 600)/2048;
+        return ((int) input * 600) / 2048;
     }
 
 }

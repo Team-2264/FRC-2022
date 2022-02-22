@@ -27,11 +27,11 @@ import edu.wpi.first.networktables.NetworkTableEntry;
  */
 public class Robot extends TimedRobot {
 
-  // public DriveTrain dt;
-  // public Shooter sh;
-  // public Sensors se;
-  // public Intake in;
-  // public Climbing cl;
+  public DriveTrain dt;
+  public Shooter sh;
+  public Sensors se;
+  public Intake in;
+  public Climbing cl;
   public Test ts;
 
   public Joystick j;
@@ -41,7 +41,6 @@ public class Robot extends TimedRobot {
   NetworkTableEntry xEntry;
   NetworkTableEntry yEntry;
   NetworkTableEntry heading;
-  Intake in;
 
   /**
    * This function is run when the robot is first started up and should be used
@@ -51,9 +50,9 @@ public class Robot extends TimedRobot {
   @Override
   public void robotInit() {
 
-    // dt = new DriveTrain();
-    // sh = new Shooter();
-    // se = new Sensors();
+    dt = new DriveTrain();
+    sh = new Shooter();
+    se = new Sensors();
     in = new Intake();
     // cl = new Climbing();
 

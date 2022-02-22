@@ -18,6 +18,27 @@ public class Climbing {
         leftClimbing.set(ControlMode.Velocity, convertToUnitsPer100ms(100));
     }
 
+    public void reverseClimber() {
+        rightClimbing.set(ControlMode.Velocity, convertToUnitsPer100ms(-100));
+        leftClimbing.set(ControlMode.Velocity, convertToUnitsPer100ms(-100));
+    }
+
+    public void runLeft() {
+        leftClimbing.set(ControlMode.Velocity, convertToUnitsPer100ms(100));
+    }
+
+    public void runRight() {
+        rightClimbing.set(ControlMode.Velocity, convertToUnitsPer100ms(100));
+    }
+
+    public void reverseLeft() {
+        leftClimbing.set(ControlMode.Velocity, convertToUnitsPer100ms(-100));
+    }
+
+    public void reverseRight() {
+        leftClimbing.set(ControlMode.Velocity, convertToUnitsPer100ms(-100));
+    }
+
     public void stopClimber() {
         rightClimbing.set(ControlMode.Velocity, convertToUnitsPer100ms(0));
         leftClimbing.set(ControlMode.Velocity, convertToUnitsPer100ms(0));

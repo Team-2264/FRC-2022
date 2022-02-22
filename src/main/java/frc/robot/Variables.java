@@ -5,13 +5,13 @@ public class Variables {
     // Motor Ports
     // public static final int frontLeftMotorPort = 4;
     // public static final int frontRightMotorPort = 1;
-    public static final int frontLeftMotorPort = 9;
-    public static final int frontRightMotorPort = 7;
+    public static final int frontLeftMotorPort = 4;
+    public static final int frontRightMotorPort = 1;
     public static final int backLeftMotorPort = 3;
     public static final int backRightMotorPort = 2;
 
-    public static final int shooterMotorTopPort = 6;
-    public static final int shooterMotorBottomPort = 5;
+    public static final int shooterMotorTopPort = 5;
+    public static final int shooterMotorBottomPort = 6;
 
     public static final int intakeMotorPort = 9;
     public static final int indexMotorPort = 8;

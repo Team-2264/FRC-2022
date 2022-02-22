@@ -6,6 +6,9 @@ package frc.robot;
 
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.Joystick;
+
+import java.util.ResourceBundle.Control;
+
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
@@ -28,7 +31,7 @@ public class Robot extends TimedRobot {
   // public Shooter sh;
   // public Sensors se;
   // public Intake in;
-  // public Climbing cl;
+  public Climbing cl;
   public Test ts;
 
   public Joystick j;
@@ -50,7 +53,7 @@ public class Robot extends TimedRobot {
     // sh = new Shooter();
     // se = new Sensors();
     // in = new Intake();
-    // cl = new Climbing();
+    cl = new Climbing();
     
     
     j = new Joystick(0);
@@ -58,8 +61,6 @@ public class Robot extends TimedRobot {
     // se.smartdashboardSensorsInit();
 
     // sh.smartdashboardShooterInit();
-
-    // se.cameraInit();
 
     NetworkTableInstance inst = NetworkTableInstance.getDefault();
 
@@ -113,15 +114,30 @@ public class Robot extends TimedRobot {
   @Override
   public void teleopPeriodic() {
 
-    SmartDashboard.putNumber("X", xEntry.getDouble(1.0));
-    SmartDashboard.putNumber("Y", yEntry.getDouble(1.0));
+    // SmartDashboard.putNumber("X", xEntry.getDouble(1.0));
+    // SmartDashboard.putNumber("Y", yEntry.getDouble(1.0));
 
 
     // se.updateSensorsPlaceNumbers();
 
     // sh.updateShooterMotorSpeeds();
 
-    // dt.mecDrive(j); 
+
+    // dt.mecDrive(j);
+
+    if(j.getRawButton(9)) {
+      cl.runLeft();
+    }
+    if(j.getRawButton(10)) {
+      cl.runRight();
+    }
+    if(j.getRawButton(11)) {
+      cl.reverseLeft();
+    }
+    if(j.getRawButton(12)) {
+      cl.reverseRight();
+    }
+    
 
     // Shooting
 

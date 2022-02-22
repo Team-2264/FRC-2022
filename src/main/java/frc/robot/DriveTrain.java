@@ -34,10 +34,10 @@ public class DriveTrain {
 
     public static long startBackUpTime;
 
-    WPI_TalonSRX backLeft;
-    WPI_TalonSRX backRight;
-    WPI_TalonSRX frontLeft;
-    WPI_TalonSRX frontRight;
+    public WPI_TalonSRX backLeft;
+    public WPI_TalonSRX backRight;
+    public WPI_TalonSRX frontLeft;
+    public WPI_TalonSRX frontRight;
 
     MecanumDrive mDrive;
 

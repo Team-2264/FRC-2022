@@ -19,10 +19,13 @@ import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.networktables.NetworkTableEntry;
 
-/**
- * The VM is configured to automatically run this class, and to call the functions corresponding to
- * each mode, as described in the TimedRobot documentation. If you change the name of this class or
- * the package after creating this project, you must also update the build.gradle file in the
+/*
+ * The VM is configured to automatically run this class, and to call the
+ * functions corresponding to
+ * each mode, as described in the TimedRobot documentation. If you change the
+ * name of this class or
+ * the package after creating this project, you must also update the
+ * build.gradle file in the
  * project.
  */
 public class Robot extends TimedRobot {
@@ -40,10 +43,11 @@ public class Robot extends TimedRobot {
 
   NetworkTableEntry xEntry;
   NetworkTableEntry yEntry;
-
+  NetworkTableEntry heading;
 
   /**
-   * This function is run when the robot is first started up and should be used for any
+   * This function is run when the robot is first started up and should be used
+   * for any
    * initialization code.
    */
   @Override
@@ -65,17 +69,21 @@ public class Robot extends TimedRobot {
     NetworkTableInstance inst = NetworkTableInstance.getDefault();
 
     table = inst.getTable("Vision");
-
-    xEntry = table.getEntry("target_x");
-    yEntry = table.getEntry("target_y");
+    heading = table.getEntry("heading");
+    // xEntry = table.getEntry("target_x");
+    // yEntry = table.getEntry("target_y");
 
   }
 
   /**
-   * This function is called every robot packet, no matter the mode. Use this for items like
-   * diagnostics that you want ran during disabled, autonomous, teleoperated and test.
+   * This function is called every robot packet, no matter the mode. Use this for
+   * items like
+   * diagnostics that you want ran during disabled, autonomous, teleoperated and
+   * test.
    *
-   * <p>This runs after the mode specific periodic functions, but before LiveWindow and
+   * <p>
+   * This runs after the mode specific periodic functions, but before LiveWindow
+   * and
    * SmartDashboard integrated updating.
    */
   @Override
@@ -83,25 +91,32 @@ public class Robot extends TimedRobot {
   }
 
   /**
-   * This autonomous (along with the chooser code above) shows how to select between different
-   * autonomous modes using the dashboard. The sendable chooser code works with the Java
-   * SmartDashboard. If you prefer the LabVIEW Dashboard, remove all of the chooser code and
-   * uncomment the getString line to get the auto name from the text box below the Gyro
+   * This autonomous (along with the chooser code above) shows how to select
+   * between different
+   * autonomous modes using the dashboard. The sendable chooser code works with
+   * the Java
+   * SmartDashboard. If you prefer the LabVIEW Dashboard, remove all of the
+   * chooser code and
+   * uncomment the getString line to get the auto name from the text box below the
+   * Gyro
    *
-   * <p>You can add additional auto modes by adding additional comparisons to the switch structure
-   * below with additional strings. If using the SendableChooser make sure to add them to the
+   * <p>
+   * You can add additional auto modes by adding additional comparisons to the
+   * switch structure
+   * below with additional strings. If using the SendableChooser make sure to add
+   * them to the
    * chooser code above as well.
    */
   @Override
   public void autonomousInit() {
     // dt.backUp();
-    
+
   }
 
   /** This function is called periodically during autonomous. */
   @Override
   public void autonomousPeriodic() {
-    
+
   }
 
   /** This function is called once when teleop is enabled. */
@@ -114,9 +129,7 @@ public class Robot extends TimedRobot {
   @Override
   public void teleopPeriodic() {
 
-    // SmartDashboard.putNumber("X", xEntry.getDouble(1.0));
-    // SmartDashboard.putNumber("Y", yEntry.getDouble(1.0));
-
+    SmartDashboard.putNumber("Heading", heading.getDouble(1.0));
 
     // se.updateSensorsPlaceNumbers();
 
@@ -142,67 +155,68 @@ public class Robot extends TimedRobot {
     // Shooting
 
     // Manual Shoot
-    
+
     // if(j.getRawButton(1)) {
-    //   if(j.getRawButton(1)) {
-    //     sh.manualShoot();
-    //   } else if (j.getRawButton(2)) {
-    //     sh.manualShootReverse();
-    //   }
+    // if(j.getRawButton(1)) {
+    // sh.manualShoot();
+    // } else if (j.getRawButton(2)) {
+    // sh.manualShootReverse();
+    // }
     // } else {
-    //   sh.stopShoot();
+    // sh.stopShoot();
     // }
 
     // if(j.getRawButton(2)) {
-    //   in.runIntake();
-    //   SmartDashboard.putBoolean("Cal", true);
+    // in.runIntake();
+    // SmartDashboard.putBoolean("Cal", true);
     // } else {
-    //   in.stopIntake();
-    //   SmartDashboard.putBoolean("Cal", false);
+    // in.stopIntake();
+    // SmartDashboard.putBoolean("Cal", false);
 
     // }
-    
+    if (j.getRawButton(1)) {
+      // in.alignIntake();
+    }
     // if(j.getRawButton(4)) {
-    //   in.runIntake();
+    // in.runIntake();
     // } else {
-    //   in.stopIntake();
+    // in.stopIntake();
     // }
 
     // if(j.getRawButton(5)) {
-    //   in.runIndex();
+    // in.runIndex();
     // } else {
-    //   in.stopIndex();
+    // in.stopIndex();
     // }
-
 
     // Smart Shoot
     // if(j.getRawButton(1)) {
-    //   if(dt.alignSelf(se)) {
-    //     sh.smartShoot(se.calcDistance());
-    //   } 
+    // if(dt.alignSelf(se)) {
+    // sh.smartShoot(se.calcDistance());
+    // }
     // } else {
-    //   if(dt.aligning) {
-    //     dt.fullStop();
-    //   }
-    //   if(sh.isShooting()) {
-    //     sh.stopShoot();
-    //   }
+    // if(dt.aligning) {
+    // dt.fullStop();
+    // }
+    // if(sh.isShooting()) {
+    // sh.stopShoot();
+    // }
     // }
 
     // Intake
 
     // if(j.getRawButton(5)){
-    //   in.runIntake();
+    // in.runIntake();
     // }
     // else{
-    //   in.stopIntake();
+    // in.stopIntake();
     // }
 
     // if(j.getRawButton(6)){
-    //   in.manualIndex();
+    // in.manualIndex();
     // }
     // else{
-    //   in.stopManualIndex();
+    // in.stopManualIndex();
     // }
 
   }
@@ -215,7 +229,8 @@ public class Robot extends TimedRobot {
 
   /** This function is called periodically when disabled. */
   @Override
-  public void disabledPeriodic() {}
+  public void disabledPeriodic() {
+  }
 
   /** This function is called once when test mode is enabled. */
   @Override

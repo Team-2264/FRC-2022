@@ -66,11 +66,18 @@ public class DriveTrain {
     }
 
     public void mecDrive(Joystick j) {
-        mDrive.driveCartesian(-0.4*j.getY(), 0.25 * j.getX(), 0.35 * j.getZ());
+        mDrive.driveCartesian(-0.4 * j.getY(), 0.25 * j.getX(), 0.35 * j.getZ());
     }
 
     public void drive(double x, double y, double z) {
         mDrive.driveCartesian(x, y, z);
+    }
+
+    public void turn(int direction) {
+        if (direction == -1)
+            drive(0, 0, -0.5);
+        if (direction == 1)
+            drive(0, 0, 0.5);
     }
 
     public void fullStop() {
@@ -99,12 +106,12 @@ public class DriveTrain {
     }
 
     public boolean alignSelf(Sensors se) {
-        if(Math.abs(se.getTX()) < Variables.tXthreshold) {
+        if (Math.abs(se.getTX()) < Variables.tXthreshold) {
             aligning = false;
             return true;
         } else {
             aligning = true;
-            if(se.getTX() > 0) {
+            if (se.getTX() > 0) {
                 // Turn Left
             } else {
                 // Turn Right

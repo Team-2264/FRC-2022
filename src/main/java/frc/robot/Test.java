@@ -18,10 +18,8 @@ public class Test {
 
     public Test() {
 
-        portsFX = new int[1];
+        portsFX = new int[0];
         portsSRX = new int[0];
-
-        portsFX[0] = 9;
 
         fx = new WPI_TalonFX[portsFX.length];
         srx = new WPI_TalonSRX[portsSRX.length];

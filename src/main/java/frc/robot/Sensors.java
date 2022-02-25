@@ -18,38 +18,38 @@ public class Sensors {
 
     private NetworkTable limeTable;
 
-    private DigitalInput bbFrontOpen, bbFrontClosed;
+    private DigitalInput bbFrontOpen, bbFrontClosed, bbBackOpen, bbBackClosed;
 
     Thread m_visionThread;
 
-    double d, height, angle, offset, ty, tx, usDistance;
+    double d, height, angle, offset, ty, tx;
     boolean[] beamsBroken;
 
     public Sensors() {
         d = 0;
 
-        beamsBroken = new boolean[2];
+        beamsBroken = new boolean[4];
         beamsBroken[0] = false;
         beamsBroken[1] = false;
+        beamsBroken[2] = false;
+        beamsBroken[3] = false;
 
         height = Variables.height;
         offset = Variables.offset;
 
-        usDistance = 0;
-
         // Beam Break setup
         bbFrontOpen = new DigitalInput(0);
         bbFrontClosed = new DigitalInput(1);
-        // bbBackOpen = new DigitalInput(5);
-        // bbBackClosed = new DigitalInput(6);
+        bbBackOpen = new DigitalInput(2);
+        bbBackClosed = new DigitalInput(3);
 
         // Limelight setup
-        // limeTable = NetworkTableInstance.getDefault().getTable("limelight");
-        // limeTable.getEntry("stream").setNumber(2.0);
+        limeTable = NetworkTableInstance.getDefault().getTable("limelight");
+        limeTable.getEntry("stream").setNumber(2.0);
     }
 
     public void updateSensorsPlaceNumbers() {
-        // updateLimelight();
+        updateLimelight();
         updateBeamBreaks();
 
         updateSmartDashboardSensors();
@@ -64,13 +64,13 @@ public class Sensors {
         ty = limeTable.getEntry("ty").getDouble(0);
         tx = limeTable.getEntry("tx").getDouble(0);
 
-        offset = SmartDashboard.getNumber("Angle", 44.5);
+        offset = SmartDashboard.getNumber("Angle", 22.5);
     }
 
     public double calcDistance() {
-        angle = offset + ty;
-        return (((104 - SmartDashboard.getNumber("Height", 37))
-                * ((Math.sin(Math.toRadians(90 - angle)) / Math.sin(Math.toRadians(angle))))) / 12);
+        angle = offset - ty;
+        return (((103 - SmartDashboard.getNumber("Height", 28))
+                * (Math.sin(Math.toRadians(90 - angle)))) / Math.sin(Math.toRadians(angle)) / 12);
     }
 
     public boolean isAligned() {
@@ -92,33 +92,21 @@ public class Sensors {
         return ty;
     }
 
-    // ULRASONIC CODEs
-
-    public double getUltrasonic() {
-        return usDistance;
-    }
-
-    public void updateUltrasonic() {
-
-    }
-
-    public void closeUltrasonic() {
-
-    }
-
     // BEAM BREAK CODE
 
     public boolean[] getBeamBreaks() {
         return beamsBroken;
     }
 
-    public boolean getBeamBroken() {
+    public boolean getFrontBeamBroken() {
         return beamsBroken[1];
     }
 
     private void updateBeamBreaks() {
         beamsBroken[0] = bbFrontOpen.get();
         beamsBroken[1] = bbFrontClosed.get();
+        beamsBroken[2] = bbBackOpen.get();
+        beamsBroken[3] = bbBackClosed.get();
     }
 
     // Camera
@@ -162,26 +150,34 @@ public class Sensors {
         m_visionThread.start();
     }
 
+    public boolean frontStatus() {
+        return beamsBroken[1];
+    }
+
+    public boolean backStatus() {
+        return beamsBroken[3];
+    }
+
     // SMARTDASHBOARD CODE
 
     public void smartdashboardSensorsInit() {
         SmartDashboard.putNumber("Angle", Variables.offset);
         SmartDashboard.putNumber("Height", Variables.height);
-        SmartDashboard.putBoolean("Beam One", false);
-        SmartDashboard.putBoolean("Beam Two", false);
+        
+        SmartDashboard.putBoolean("Beam Front Open", false);
+        SmartDashboard.putBoolean("Beam Front Closed", false);
+        SmartDashboard.putBoolean("Beam Back Open", false);
+        SmartDashboard.putBoolean("Beam Back Closed", false);
     }
 
     private void updateSmartDashboardSensors() {
-        // SmartDashboard.putNumber("Distance", calcDistance());
+        SmartDashboard.putNumber("Distance", calcDistance());
 
         SmartDashboard.putBoolean("Beam Front Open", beamsBroken[0]);
         SmartDashboard.putBoolean("Beam Front Closed", beamsBroken[1]);
-
-        // SmartDashboard.putNumber("UltraSonic Distance (in)", usDistance);
+        SmartDashboard.putBoolean("Beam Back Open", beamsBroken[2]);
+        SmartDashboard.putBoolean("Beam Back Closed", beamsBroken[3]);
     }
 
-    public void updateBallCount(int balls) {
-        SmartDashboard.putNumber("Balls In System", balls);
-    }
 
 }

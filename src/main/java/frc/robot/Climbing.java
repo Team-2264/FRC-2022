@@ -1,16 +1,38 @@
 package frc.robot;
 
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
+
 import com.ctre.phoenix.motorcontrol.ControlMode;
+import edu.wpi.first.wpilibj.Compressor;
+import edu.wpi.first.wpilibj.DoubleSolenoid;
+import edu.wpi.first.wpilibj.PneumaticsModuleType;
+import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
+import edu.wpi.first.wpilibj.DoubleSolenoid.Value.*;
+import edu.wpi.first.wpilibj.PneumaticsControlModule;
 
 public class Climbing {
 
     // private WPI_TalonFX leftClimbing;
     private WPI_TalonFX rightClimbing, leftClimbing;
+    
+
+    Compressor compressor;
+
+    DoubleSolenoid doubleSolenoid;
+
+    ClimbingSolenoid arms, ram;
+    Variables varLib;
 
     public Climbing() {
+        compressor = new Compressor(0, PneumaticsModuleType.CTREPCM);
+        
         rightClimbing = new WPI_TalonFX(Variables.climbingMotorPortRight);
         leftClimbing = new WPI_TalonFX(Variables.climbingMotorPortLeft);
+
+        arms = new ClimbingSolenoid(4, 5);
+        ram = new ClimbingSolenoid(6, 7);
+
+        compressor.enableDigital();;
     }
 
     public void runClimber() {
@@ -24,25 +46,40 @@ public class Climbing {
     }
 
     public void runLeft() {
-        leftClimbing.set(ControlMode.Velocity, convertToUnitsPer100ms(100));
+        leftClimbing.set(ControlMode.Velocity, convertToUnitsPer100ms(750));
     }
 
     public void runRight() {
-        rightClimbing.set(ControlMode.Velocity, convertToUnitsPer100ms(100));
+        rightClimbing.set(ControlMode.Velocity, convertToUnitsPer100ms(750));
     }
 
     public void reverseLeft() {
-        leftClimbing.set(ControlMode.Velocity, convertToUnitsPer100ms(-100));
+        leftClimbing.set(ControlMode.Velocity, convertToUnitsPer100ms(-750));
     }
 
     public void reverseRight() {
-        leftClimbing.set(ControlMode.Velocity, convertToUnitsPer100ms(-100));
+        rightClimbing.set(ControlMode.Velocity, convertToUnitsPer100ms(-750));
     }
 
     public void stopClimber() {
         rightClimbing.set(ControlMode.Velocity, convertToUnitsPer100ms(0));
         leftClimbing.set(ControlMode.Velocity, convertToUnitsPer100ms(0));
     }
+
+    public void extendArms(){
+        arms.extendSolenoid();
+    }
+    public void retractArms(){
+        arms.retractSolenoid();
+    }
+
+    public void extendRam(){
+        ram.extendSolenoid();
+    }
+    public void retractRam(){
+        ram.retractSolenoid();
+    }
+
     // suck my dick
 
     public double convertToUnitsPer100ms(double rpm) {

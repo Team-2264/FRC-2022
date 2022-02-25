@@ -13,6 +13,7 @@ public class Shooter {
 
     WPI_TalonFX shooterTop;
     WPI_TalonFX shooterBottom;
+    WPI_TalonFX intakeMotor;
 
     boolean manualShooting;
     boolean smartShooting;
@@ -20,6 +21,7 @@ public class Shooter {
     public Shooter() {
         shooterTop = new WPI_TalonFX(Variables.shooterMotorTopPort);
         shooterBottom = new WPI_TalonFX(Variables.shooterMotorBottomPort);
+        intakeMotor = new WPI_TalonFX(Variables.intakeMotorPort);
 
         shooterBottom.configFactoryDefault();
         shooterBottom.config_kP(0, Variables.shooterBottom_kP);
@@ -32,6 +34,12 @@ public class Shooter {
         shooterTop.config_kI(0, Variables.shooterTop_kI);
         shooterTop.config_kD(0, Variables.shooterTop_kD);
         shooterTop.config_kF(0, Variables.shooterTop_kF);
+
+        intakeMotor.configFactoryDefault();
+        intakeMotor.config_kP(0, Variables.shooterTop_kP);
+        intakeMotor.config_kI(0, Variables.shooterTop_kI);
+        intakeMotor.config_kD(0, Variables.shooterTop_kD);
+        intakeMotor.config_kF(0, Variables.shooterTop_kF);
 
         manualShooting = false;
         smartShooting = false;
@@ -70,9 +78,60 @@ public class Shooter {
         manualShooting = true;
     }
 
-    public void smartShoot(double distance) {
-        smartShooting = true;
+    public boolean smartShoot(double dist, double tx, DriveTrain dt) {
+        if(Math.abs(tx) > 3) {
+            if(tx > 0) {
+                dt.drive(0, 0, -.125);
+            } else {
+                dt.drive(0, 0, .125);
+            }
+            return false;
+        } else { 
+            shooterBottom.set(ControlMode.Velocity, -1 * convertToUnitsPer100ms(getRPM(dist)));
+            shooterTop.set(ControlMode.Velocity, convertToUnitsPer100ms(getRPM(dist)));
+
+            return true;
+        }
     }
+
+    public boolean smartShootTwo(double dist, double tx, DriveTrain dt, Intake in) {
+        if(Math.abs(tx) > 3) {
+            if(tx > 0) {
+                dt.drive(0, 0, -.125);
+            } else {
+                dt.drive(0, 0, .125);
+            }
+            return false;
+        } else { 
+            shooterBottom.set(ControlMode.Velocity, -1 * convertToUnitsPer100ms(getRPMTwo(dist)));
+            shooterTop.set(ControlMode.Velocity, convertToUnitsPer100ms(getRPMTwo(dist)));
+            in.runIndex();
+            return true;
+        }
+    }
+
+    public void runIntake() {
+        intakeMotor.set(ControlMode.Velocity, convertToUnitsPer100ms(-1000));
+    }
+
+    public double getRPM(double dist) {
+        SmartDashboard.putNumber("RPM", Math.sqrt(125*dist - 100));
+        return 100 * Math.sqrt(125*dist - 100);
+    }
+
+    public double getRPMTwo(double dist) {
+        SmartDashboard.putNumber("RPM", 1.15*(Math.sqrt((162*(dist + 1.1))) - 252) + 5);
+        return 100 * Math.sqrt(125*dist - 100);
+    }
+
+    public void reverseIntake() {
+        intakeMotor.set(ControlMode.Velocity, convertToUnitsPer100ms(1000));
+    }
+
+    public void stopIntake() {
+        intakeMotor.set(ControlMode.Velocity, convertToUnitsPer100ms(0));
+    }
+
 
     public void stopShoot() {
         shooterBottom.set(ControlMode.PercentOutput, 0);

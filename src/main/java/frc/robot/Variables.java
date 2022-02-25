@@ -3,8 +3,6 @@ package frc.robot;
 public class Variables {
 
     // Motor Ports
-    // public static final int frontLeftMotorPort = 4;
-    // public static final int frontRightMotorPort = 1;
     public static final int frontLeftMotorPort = 4;
     public static final int frontRightMotorPort = 1;
     public static final int backLeftMotorPort = 3;
@@ -38,10 +36,16 @@ public class Variables {
 
     // Height and Angle
 
-    public static final double height = 37;
-    public static final double offset = 44.5;
+    public static final double height = 28;
+    public static final double offset = 22.5;
 
     // Threshold for alignment in degrees
     public static final double tXthreshold = 2.0;
+
+    public static final int armsForward = 4;
+    public static final int armsBackward = 5;
+    public static final int ramForward = 6;
+    public static final int ramBackward = 7;
+
 
 }

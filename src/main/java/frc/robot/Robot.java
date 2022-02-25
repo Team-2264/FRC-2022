@@ -30,12 +30,11 @@ import edu.wpi.first.networktables.NetworkTableEntry;
  */
 public class Robot extends TimedRobot {
 
-  // public DriveTrain dt;
-  // public Shooter sh;
-  // public Sensors se;
-  // public Intake in;
-  public Climbing cl;
-  public Test ts;
+  public DriveTrain dt;
+  public Shooter sh;
+  public Sensors se;
+  public Intake in;
+  // public Climbing cl;
 
   public Joystick j;
 
@@ -45,6 +44,7 @@ public class Robot extends TimedRobot {
   NetworkTableEntry yEntry;
   NetworkTableEntry heading;
 
+
   /**
    * This function is run when the robot is first started up and should be used
    * for any
@@ -53,25 +53,27 @@ public class Robot extends TimedRobot {
   @Override
   public void robotInit() {
 
-    // dt = new DriveTrain();
-    // sh = new Shooter();
-    // se = new Sensors();
-    // in = new Intake();
-    cl = new Climbing();
-    
+    dt = new DriveTrain();
+    sh = new Shooter();
+    se = new Sensors();
+    in = new Intake();
+    // cl = new Climbing();
     
     j = new Joystick(0);
 
-    // se.smartdashboardSensorsInit();
+    se.smartdashboardSensorsInit();
 
-    // sh.smartdashboardShooterInit();
+    sh.smartdashboardShooterInit();
 
     NetworkTableInstance inst = NetworkTableInstance.getDefault();
 
     table = inst.getTable("Vision");
     heading = table.getEntry("heading");
-    // xEntry = table.getEntry("target_x");
-    // yEntry = table.getEntry("target_y");
+
+    // Smart Dashboard Init
+
+    SmartDashboard.putBoolean("Shooter", false);
+    SmartDashboard.putBoolean("Intake", false);
 
   }
 
@@ -109,8 +111,7 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void autonomousInit() {
-    // dt.backUp();
-
+    dt.backUp();
   }
 
   /** This function is called periodically during autonomous. */
@@ -122,109 +123,48 @@ public class Robot extends TimedRobot {
   /** This function is called once when teleop is enabled. */
   @Override
   public void teleopInit() {
-    // sh.autokF();
+    
   }
 
   /** This function is called periodically during operator control. */
   @Override
   public void teleopPeriodic() {
 
-    SmartDashboard.putNumber("Heading", heading.getDouble(1.0));
+    SmartDashboard.putNumber("Heading", heading.getDouble(0.0));
 
-    // se.updateSensorsPlaceNumbers();
+    sh.updateShooterMotorSpeeds();
 
-    // sh.updateShooterMotorSpeeds();
+    se.updateSensorsPlaceNumbers();
 
-
-    // dt.mecDrive(j);
-
-    if(j.getRawButton(9)) {
-      cl.runLeft();
-    }
-    if(j.getRawButton(10)) {
-      cl.runRight();
-    }
-    if(j.getRawButton(11)) {
-      cl.reverseLeft();
-    }
-    if(j.getRawButton(12)) {
-      cl.reverseRight();
-    }
-    
-
-    // Shooting
+    dt.mecDrive(j);
 
     // Manual Shoot
 
-    // if(j.getRawButton(1)) {
-    // if(j.getRawButton(1)) {
-    // sh.manualShoot();
-    // } else if (j.getRawButton(2)) {
-    // sh.manualShootReverse();
-    // }
-    // } else {
-    // sh.stopShoot();
-    // }
-
-    // if(j.getRawButton(2)) {
-    // in.runIntake();
-    // SmartDashboard.putBoolean("Cal", true);
-    // } else {
-    // in.stopIntake();
-    // SmartDashboard.putBoolean("Cal", false);
-
-    // }
-    if (j.getRawButton(1)) {
-      // in.alignIntake();
+    if(j.getRawButton(1)) {
+      sh.smartShootTwo(se.calcDistance(), se.getTX(), dt, in);
+      SmartDashboard.putBoolean("Shooter", true);
+    } else {
+      sh.stopShoot();
+      SmartDashboard.putBoolean("Shooter", false);
     }
-    // if(j.getRawButton(4)) {
-    // in.runIntake();
-    // } else {
-    // in.stopIntake();
-    // }
 
-    // if(j.getRawButton(5)) {
-    // in.runIndex();
-    // } else {
-    // in.stopIndex();
-    // }
-
-    // Smart Shoot
-    // if(j.getRawButton(1)) {
-    // if(dt.alignSelf(se)) {
-    // sh.smartShoot(se.calcDistance());
-    // }
-    // } else {
-    // if(dt.aligning) {
-    // dt.fullStop();
-    // }
-    // if(sh.isShooting()) {
-    // sh.stopShoot();
-    // }
-    // }
-
-    // Intake
-
-    // if(j.getRawButton(5)){
-    // in.runIntake();
-    // }
-    // else{
-    // in.stopIntake();
-    // }
-
-    // if(j.getRawButton(6)){
-    // in.manualIndex();
-    // }
-    // else{
-    // in.stopManualIndex();
-    // }
+    if(j.getRawButton(2)) {
+      in.runIndex();
+      sh.runIntake();
+      SmartDashboard.putBoolean("Intake", true);
+    } else {
+      sh.stopIntake();
+      if(!j.getRawButton(1)) {
+        in.stopIndex();
+      }
+      SmartDashboard.putBoolean("Intake", false);
+    }
 
   }
 
   /** This function is called once when the robot is disabled. */
   @Override
   public void disabledInit() {
-    // se.closeUltrasonic();
   }
 
   /** This function is called periodically when disabled. */
@@ -235,14 +175,13 @@ public class Robot extends TimedRobot {
   /** This function is called once when test mode is enabled. */
   @Override
   public void testInit() {
-    ts = new Test();
-    ts.smartdashboardInit();
+
   }
 
   /** This function is called periodically during test mode. */
   @Override
   public void testPeriodic() {
-    ts.callPeriodic(j);
-    ts.smartdashboardUpdate();
+
   }
+  
 }

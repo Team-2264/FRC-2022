@@ -18,6 +18,8 @@ public class Shooter {
     boolean manualShooting;
     boolean smartShooting;
 
+    double lastLimed;
+
     public Shooter() {
         shooterTop = new WPI_TalonFX(Variables.shooterMotorTopPort);
         shooterBottom = new WPI_TalonFX(Variables.shooterMotorBottomPort);
@@ -46,6 +48,8 @@ public class Shooter {
 
         shooterTop.setInverted(true);
         shooterBottom.setInverted(true);
+
+        lastLimed = 0.0;
 
     }
 
@@ -87,6 +91,7 @@ public class Shooter {
             }
             return false;
         } else { 
+
             shooterBottom.set(ControlMode.Velocity, -1 * convertToUnitsPer100ms(getRPM(dist)));
             shooterTop.set(ControlMode.Velocity, convertToUnitsPer100ms(getRPM(dist)));
 
@@ -95,7 +100,7 @@ public class Shooter {
     }
 
     public boolean smartShootTwo(double dist, double tx, DriveTrain dt, Intake in) {
-        if(Math.abs(tx) > 3) {
+        if(Math.abs(tx) - 1 > 1.5) {
             if(tx > 0) {
                 dt.drive(0, 0, -.125);
             } else {
@@ -103,9 +108,15 @@ public class Shooter {
             }
             return false;
         } else { 
-            shooterBottom.set(ControlMode.Velocity, -1 * convertToUnitsPer100ms(getRPMTwo(dist)));
-            shooterTop.set(ControlMode.Velocity, convertToUnitsPer100ms(getRPMTwo(dist)));
-            in.runIndex();
+            if(lastLimed == 0.0) {
+                lastLimed = System.currentTimeMillis();
+            } else {
+                if(System.currentTimeMillis() - lastLimed > 1000) {
+                    shooterBottom.set(ControlMode.Velocity, -1 * convertToUnitsPer100ms(getRPMTwo(dist)));
+                    shooterTop.set(ControlMode.Velocity, convertToUnitsPer100ms(getRPMTwo(dist)));
+                    in.runIndex();
+                }
+            }
             return true;
         }
     }
@@ -120,8 +131,13 @@ public class Shooter {
     }
 
     public double getRPMTwo(double dist) {
-        SmartDashboard.putNumber("RPM", 1.15*(Math.sqrt((162*(dist + 1.1))) - 252) + 5);
-        return 100 * Math.sqrt(125*dist - 100);
+
+        if(dist > 15.1 || dist < 15) {
+            SmartDashboard.putNumber("RPM", 1.15*(Math.sqrt((162*(dist + 1.1))) - 252) + 5);
+            return (100 * Math.sqrt(125*dist - 100));
+        } else {
+            return 0;
+        }
     }
 
     public void reverseIntake() {

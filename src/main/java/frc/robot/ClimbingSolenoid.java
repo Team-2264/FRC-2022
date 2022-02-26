@@ -19,4 +19,8 @@ public class ClimbingSolenoid{
     public void retractSolenoid(){
         doubleSolenoid.set(Value.kReverse);
     }
+
+    public void disableSolenoid() {
+        doubleSolenoid.set(Value.kOff);
+    }
 }

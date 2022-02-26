@@ -68,6 +68,10 @@ public class Intake {
         indexMotor.set(ControlMode.Velocity, convertToUnitsPer100ms(-4000));
     }
 
+    public void reverseIndex() {
+        indexMotor.set(ControlMode.Velocity, convertToUnitsPer100ms(4000));
+    }
+
     public void stopIndex() {
         indexMotor.set(ControlMode.Velocity, 0);
     }

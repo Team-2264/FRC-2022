@@ -112,8 +112,8 @@ public class Shooter {
                 lastLimed = System.currentTimeMillis();
             } else {
                 if(System.currentTimeMillis() - lastLimed > 1000) {
-                    shooterBottom.set(ControlMode.Velocity, -1 * convertToUnitsPer100ms(getRPMTwo(dist)));
-                    shooterTop.set(ControlMode.Velocity, convertToUnitsPer100ms(getRPMTwo(dist)));
+                    shooterBottom.set(ControlMode.Velocity, -1 * convertToUnitsPer100ms(getRPMThree(dist)));
+                    shooterTop.set(ControlMode.Velocity, convertToUnitsPer100ms(getRPMThree(dist)));
                     in.runIndex();
                 }
             }
@@ -130,6 +130,7 @@ public class Shooter {
         return 100 * Math.sqrt(125*dist - 100);
     }
 
+
     public double getRPMTwo(double dist) {
 
         if(dist > 15.1 || dist < 15) {
@@ -140,6 +141,11 @@ public class Shooter {
         }
     }
 
+    public double getRPMThree(double dist) {
+        double rpm = (-4.6296*(dist*dist)+214.8148*(dist)+1678.5648);
+        SmartDashboard.putNumber("RPM", rpm);
+        return rpm;
+    }
     public void reverseIntake() {
         intakeMotor.set(ControlMode.Velocity, convertToUnitsPer100ms(1000));
     }

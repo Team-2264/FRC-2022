@@ -16,7 +16,7 @@ public class Intake {
     NetworkTableEntry objectAtBottom;
 
     WPI_TalonSRX indexMotor;
-    
+
     int ballsIn;
     long indexTime;
 

@@ -33,7 +33,7 @@ public class AutoController {
             
             SmartDashboard.putBoolean("Intake", true);
           } else {
-            if(!j.getRawButton(7)) {
+            if(!j.getRawButton(7) && !j.getRawButton(8)) {
               sh.stopIntake();
             }
             if(!j.getRawButton(1)) {
@@ -43,9 +43,13 @@ public class AutoController {
           }
         } else {
           in.runIndex();
-          sh.stopIntake();
           if(!se.backStatus()) {
             indexingMode = false;
+          }
+          if(j.getRawButton(3)) {
+            sh.runIntake();
+          } else {
+            sh.stopIntake();
           }
         }
     } 

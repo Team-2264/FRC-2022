@@ -17,168 +17,294 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class Climbing {
 
-  // private WPI_TalonFX leftClimbing;
-  private WPI_TalonFX rightClimbing, leftClimbing;
+    // private WPI_TalonFX leftClimbing;
+    private WPI_TalonFX rightClimbing, leftClimbing;
 
-  Compressor compressor;
+    Compressor compressor;
 
-  DoubleSolenoid doubleSolenoid;
+    DoubleSolenoid doubleSolenoid;
 
-  ClimbingSolenoid arms, ram;
-  Variables varLib;
+    ClimbingSolenoid arms, ram;
+    Variables varLib;
 
-  public Climbing() {
-    compressor = new Compressor(0, PneumaticsModuleType.CTREPCM);
+    double beginClimbingSeq;
+    boolean doingClimbing;
+    int buttonPressed;
 
-    rightClimbing = new WPI_TalonFX(Variables.climbingMotorPortRight);
-    leftClimbing = new WPI_TalonFX(Variables.climbingMotorPortLeft);
+    double encoderLeftInit, encoderRightInit;
 
-    arms = new ClimbingSolenoid(4, 5);
-    ram = new ClimbingSolenoid(6, 7);
+    public Climbing() {
+        compressor = new Compressor(0, PneumaticsModuleType.CTREPCM);
+        
+        rightClimbing = new WPI_TalonFX(Variables.climbingMotorPortRight);
+        leftClimbing = new WPI_TalonFX(Variables.climbingMotorPortLeft);
 
-    leftClimbing.configFactoryDefault();
-    leftClimbing.config_kP(0, Variables.hangar_kP);
-    leftClimbing.config_kI(0, Variables.shooterBottom_kI);
-    leftClimbing.config_kD(0, Variables.shooterBottom_kD);
-    leftClimbing.config_kF(0, Variables.shooterBottom_kF);
+        arms = new ClimbingSolenoid(4, 5);
+        ram = new ClimbingSolenoid(6, 7);
 
-    leftClimbing.setNeutralMode(NeutralMode.Brake);
+        leftClimbing.configFactoryDefault();
+        leftClimbing.config_kP(0, Variables.hangar_kP);
+        leftClimbing.config_kI(0, Variables.shooterBottom_kI);
+        leftClimbing.config_kD(0, Variables.shooterBottom_kD);
+        leftClimbing.config_kF(0, Variables.shooterBottom_kF);
 
-    rightClimbing.configFactoryDefault();
-    rightClimbing.config_kP(0, Variables.hangar_kP);
-    rightClimbing.config_kI(0, Variables.shooterBottom_kI);
-    rightClimbing.config_kD(0, Variables.shooterBottom_kD);
-    rightClimbing.config_kF(0, Variables.shooterBottom_kF);
+        leftClimbing.setNeutralMode(NeutralMode.Brake);
 
-    rightClimbing.setNeutralMode(NeutralMode.Brake);
+        rightClimbing.configFactoryDefault();
+        rightClimbing.config_kP(0, Variables.hangar_kP);
+        rightClimbing.config_kI(0, Variables.shooterBottom_kI);
+        rightClimbing.config_kD(0, Variables.shooterBottom_kD);
+        rightClimbing.config_kF(0, Variables.shooterBottom_kF);
 
-    compressor.enableDigital();
-    ;
-  }
+        rightClimbing.setNeutralMode(NeutralMode.Brake);
 
-  public void runClimber() {
-    rightClimbing.set(ControlMode.Velocity, convertToUnitsPer100ms(750));
-    leftClimbing.set(ControlMode.Velocity, convertToUnitsPer100ms(750));
-  }
+        compressor.enableDigital();
 
-  public void reverseClimber() {
-    rightClimbing.set(ControlMode.Velocity, convertToUnitsPer100ms(-750));
-    leftClimbing.set(ControlMode.Velocity, convertToUnitsPer100ms(-750));
-  }
+        beginClimbingSeq = 0;
+        doingClimbing = false;
+        buttonPressed = 0;
 
-  public void runLeft(int rpm) {
-    leftClimbing.set(ControlMode.Velocity, convertToUnitsPer100ms(rpm));
-  }
+        encoderLeftInit = leftClimbing.getSelectedSensorPosition();
+        encoderRightInit = rightClimbing.getSelectedSensorPosition();
+    }
+    
 
-  public void runRight(int rpm) {
-    rightClimbing.set(ControlMode.Velocity, convertToUnitsPer100ms(rpm));
-  }
-
-  public void reverseLeft(int rpm) {
-    leftClimbing.set(ControlMode.Velocity, convertToUnitsPer100ms(-1 * rpm));
-  }
-
-  public void reverseRight(int rpm) {
-    rightClimbing.set(ControlMode.Velocity, convertToUnitsPer100ms(-1 * rpm));
-  }
-
-  public void stopRight() {
-    rightClimbing.set(ControlMode.Velocity, convertToUnitsPer100ms(0));
-  }
-
-  public void stopLeft() {
-    leftClimbing.set(ControlMode.Velocity, convertToUnitsPer100ms(0));
-  }
-
-  public void stopClimber() {
-    rightClimbing.set(ControlMode.Velocity, convertToUnitsPer100ms(0));
-    leftClimbing.set(ControlMode.Velocity, convertToUnitsPer100ms(0));
-  }
-
-  public void extendArms() {
-    arms.extendSolenoid();
-  }
-
-  public void retractArms() {
-    arms.retractSolenoid();
-  }
-
-  public void disableArms() {
-    arms.disableSolenoid();
-  }
-
-  public void extendRam() {
-    ram.extendSolenoid();
-  }
-
-  public void retractRam() {
-    ram.retractSolenoid();
-  }
-
-  public void checkClimb(Joystick weeb, boolean readyToClimb) {
-    SmartDashboard.putNumber("Arm Left", leftClimbing.getSelectedSensorPosition());
-    SmartDashboard.putNumber("Arm Right", rightClimbing.getSelectedSensorPosition());
-
-    if (weeb.getRawButton(3)) {
-      extendArms();
-    } else if (weeb.getRawButton(1)) {
-      retractArms();
+    public void runClimber() {
+        rightClimbing.set(ControlMode.Velocity, convertToUnitsPer100ms(-500));
+        leftClimbing.set(ControlMode.Velocity, convertToUnitsPer100ms(567));
     }
 
-    if (weeb.getRawButton(4)) {
-      extendRam();
-    } else if (weeb.getRawButton(2)) {
-      retractRam();
+    public void reverseClimber() {
+        rightClimbing.set(ControlMode.Velocity, convertToUnitsPer100ms(500));
+        leftClimbing.set(ControlMode.Velocity, convertToUnitsPer100ms(-567));
     }
 
-    if ((weeb.getRawAxis(3) > 0)) {
-      runRight(2205);
-    } else if (weeb.getRawButton(6)) {
-      reverseRight(2205);
-    } else if (readyToClimb && !weeb.getRawButton(8) && !weeb.getRawButton(9)) {
-      stopRight();
+    // Move winches out (extend rope)
+
+    public void runLeft(int rpm) {
+        leftClimbing.set(ControlMode.Velocity, convertToUnitsPer100ms(rpm));
     }
 
-    if ((weeb.getRawAxis(2) > 0)) {
-      reverseLeft(2500);
-    } else if (weeb.getRawButton(5)) {
-      runLeft(2500);
-    } else if (readyToClimb && !weeb.getRawButton(8) && !weeb.getRawButton(9)) {
-      stopLeft();
+    public void runRight(int rpm) {
+        rightClimbing.set(ControlMode.Velocity, convertToUnitsPer100ms(-1 * rpm));
     }
 
-    if (weeb.getRawAxis(1) > 0) {
-      reverseClimber();
-    } else if (weeb.getRawAxis(1) < 0) {
-      runClimber();
+    // Move winches in (bring in rope)
+
+    public void reverseLeft(int rpm) {
+        leftClimbing.set(ControlMode.Velocity, convertToUnitsPer100ms(-1 * rpm));
     }
-  }
 
-  public void leftMove() {
-    if (leftClimbing.getSelectedSensorPosition() > -50000) {
-      reverseLeft(2500);
+    public void reverseRight(int rpm) {
+        rightClimbing.set(ControlMode.Velocity, convertToUnitsPer100ms(rpm));
     }
-  }
 
-  public void rightMove() {
-    if (rightClimbing.getSelectedSensorPosition() < 64000) {
-      runRight(2205);
+    // Stop motors
+
+    public void stopRight() {
+        rightClimbing.set(ControlMode.Velocity, convertToUnitsPer100ms(0));
     }
-  }
 
-  // suck my dick
+    public void stopLeft() {
+        leftClimbing.set(ControlMode.Velocity, convertToUnitsPer100ms(0));
+    }
 
-  public double convertToUnitsPer100ms(double rpm) {
-    // This function converts RPM to the unit, called "unit," that the motors use.
-    double unitsPerMinute = (rpm * 2048);
-    double unitsPer100 = unitsPerMinute / 600;
-    return unitsPer100;
-  }
+    public void stopClimber() {
+        rightClimbing.set(ControlMode.Velocity, convertToUnitsPer100ms(0));
+        leftClimbing.set(ControlMode.Velocity, convertToUnitsPer100ms(0));
+    }
 
-  private double convertToRPM(double input) {
-    // This function converts the unit, called "unit," that the motors use into RPM.
-    return ((int) input * 600) / 2048;
-  }
+    public void extendArms(){
+        arms.extendSolenoid();
+    }
+    public void retractArms(){
+        arms.retractSolenoid();
+    }
+
+    public void disableArms() {
+        arms.disableSolenoid();
+    }
+
+    public void extendRam(){
+        ram.extendSolenoid();
+    }
+    public void retractRam(){
+        ram.retractSolenoid();
+    }
+
+    public double leftEncoderDisplacement() {
+      return leftClimbing.getSelectedSensorPosition() - encoderLeftInit;
+    }
+
+    public double rightEncoderDisplacement() {
+      return rightClimbing.getSelectedSensorPosition() - encoderRightInit;
+    }
+
+    public void checkClimb(Joystick weeb) {
+      SmartDashboard.putNumber("Arm Left", leftEncoderDisplacement());
+      SmartDashboard.putNumber("Arm Right", rightEncoderDisplacement());
+        
+      if(!doingClimbing) {
+        if(weeb.getRawButton(3)) {
+            extendArms();
+        } else if(weeb.getRawButton(1)) {
+            retractArms();
+        } 
+        
+        if(weeb.getRawButton(4)) {
+            extendRam();
+        } else if(weeb.getRawButton(2)) {
+          retractRam();
+        }
+
+        if(weeb.getRawAxis(1) > 0) {
+          reverseClimber();
+        } else if (weeb.getRawAxis(1) < 0) {
+          runClimber();
+        } else {
+
+          if((weeb.getRawAxis(3) > 0)) {
+            runRight(2205);
+          } else if (weeb.getRawButton(6)) {
+            reverseRight(2205);
+          } else {
+            stopRight();
+          }
+        
+          if((weeb.getRawAxis(2) > 0)) {
+            runLeft(2500);
+          } else if (weeb.getRawButton(5)) {
+            reverseLeft(2500);
+          } else {
+            stopLeft();
+          }
+        }
+      }  
+
+      if((weeb.getRawButton(7) && (buttonPressed == 0 || buttonPressed == 7))) {
+        
+        buttonPressed = 7;
+
+        if(doingClimbing) {
+          reverseLeft(2500);
+          reverseRight(2205);
+        } else {
+          retractArms();
+          retractRam();
+          doingClimbing = true;
+        }
+      } else {
+        if(doingClimbing == true && buttonPressed == 7) {
+          buttonPressed = 0;
+          doingClimbing = false;
+        }
+      }
+
+      if((weeb.getRawButton(8) && buttonPressed == 0) || buttonPressed == 8) {
+        doingClimbing = true;
+        buttonPressed = 8;
+
+        if(leftEncoderDisplacement() < 0 && rightEncoderDisplacement() < 0) {
+          doingClimbing = false;
+          buttonPressed = 0;
+        } else {
+          extendArms();
+          if(leftEncoderDisplacement() < 0) {
+            runLeft(1000);
+          } else {
+            stopLeft();
+          }
+
+          if(rightEncoderDisplacement() < 0) {
+            runRight(1000);
+          } else {
+            stopRight();
+          }
+        }
+
+      }
+
+      if((weeb.getRawButton(9) && buttonPressed == 0) || buttonPressed == 9) {
+        doingClimbing = true;
+        buttonPressed = 9;
+
+        if(leftEncoderDisplacement() < 0 && rightEncoderDisplacement() < 0) {
+          doingClimbing = false;
+          buttonPressed = 0;
+        } else {
+          if(leftEncoderDisplacement() < 0) {
+            runLeft(1500);
+          } else {
+            stopLeft();
+          }
+
+          if(rightEncoderDisplacement() < 0) {
+            runRight(1500);
+          } else {
+            stopRight();
+          }
+        }
+
+      }
+
+      if((weeb.getRawButton(10) && buttonPressed == 0) || buttonPressed == 10) {
+        
+
+        if(beginClimbingSeq == 0) {
+          beginClimbingSeq = System.currentTimeMillis();
+          doingClimbing = true;
+          buttonPressed = 10;
+        } else {
+          retractArms();
+          extendRam();
+          if(System.currentTimeMillis() - beginClimbingSeq > 200 &&  System.currentTimeMillis() - beginClimbingSeq < 2000) {
+            runLeft(2500);
+            runRight(2205);
+          } else if(System.currentTimeMillis() - beginClimbingSeq > 3300) {
+            stopRight();
+            stopLeft();
+          }
+          if(System.currentTimeMillis() - beginClimbingSeq > 1000 && System.currentTimeMillis() - beginClimbingSeq < 6100) {
+            extendArms();
+          }
+          if(System.currentTimeMillis() - beginClimbingSeq > 3500) {
+            retractArms();
+            beginClimbingSeq = 0;
+
+            doingClimbing = false;
+            buttonPressed = 0;
+          }
+        }
+
+      }
+
+    }
+
+    public void leftMove() {
+      if(leftClimbing.getSelectedSensorPosition() > -50000) {
+        reverseLeft(2500);
+      }
+    }
+
+    public void rightMove() {
+      if(rightClimbing.getSelectedSensorPosition() < 64000) {
+        runRight(2205);
+      }
+    }
+
+    // suck my dick
+
+    public double convertToUnitsPer100ms(double rpm) {
+        // This function converts RPM to the unit, called "unit," that the motors use.
+        double unitsPerMinute = (rpm * 2048);
+        double unitsPer100 = unitsPerMinute / 600;
+        return unitsPer100;
+    }
+
+    private double convertToRPM(double input) {
+        // This function converts the unit, called "unit," that the motors use into RPM.
+        return ((int) input * 600) / 2048;
+    }
 
 }
 // it felt great ;)

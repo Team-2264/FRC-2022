@@ -44,8 +44,6 @@ public class Robot extends TimedRobot {
 
   NetworkTableEntry heading;
 
-  double beginClimbingSeq;
-  boolean readyToClimb;
 
   /**
    * This function is run when the robot is first started up and should be used
@@ -61,7 +59,7 @@ public class Robot extends TimedRobot {
     in = new Intake();
     cl = new Climbing();
     au = new AutoController();
-
+    
     j = new Joystick(0);
     weeb = new Joystick(1);
 
@@ -78,9 +76,6 @@ public class Robot extends TimedRobot {
 
     SmartDashboard.putBoolean("Shooter", false);
     SmartDashboard.putBoolean("Intake", false);
-
-    beginClimbingSeq = 0;
-    readyToClimb = true;
 
   }
 
@@ -130,7 +125,7 @@ public class Robot extends TimedRobot {
   /** This function is called once when teleop is enabled. */
   @Override
   public void teleopInit() {
-
+    
   }
 
   /** This function is called periodically during operator control. */
@@ -147,12 +142,10 @@ public class Robot extends TimedRobot {
 
     au.index(j, in, sh, se);
 
-    // Manual Shoot
+    // Shooting
 
-    if (j.getRawButton(1)) {
-      // sh.smartShootTwo(se.calcDistance(), se.getTX(), dt, in);
-      sh.manualShoot();
-      in.runIndex();
+    if(j.getRawButton(1)) {
+      sh.smartShoot(se.calcDistance(), se.getTX(), dt, in);
       SmartDashboard.putBoolean("Shooter", true);
     } else {
       sh.lastLimed = 0.0;
@@ -162,60 +155,31 @@ public class Robot extends TimedRobot {
 
     // AIMBOT INTAKE
 
-    if (j.getRawButton(7)) {
-      if (heading.getDouble(0.0) < 0) {
+    if(j.getRawButton(7)) {
+      if(heading.getDouble(0.0) < 0) {
         dt.drive(0, 0, -.1);
       } else if (heading.getDouble(0.0) < 1.5 && heading.getDouble(0.0) > .5) {
-        dt.drive(0, 0, .4);
+        dt.drive(0,0, .1); 
       } else {
-        dt.drive(.8, 0, 0);
+        dt.drive(.2, 0, 0);
         sh.runIntake();
       }
     }
 
-    cl.checkClimb(weeb, readyToClimb);
-
-    if (weeb.getRawButton(9)) {
-      cl.retractArms();
-      cl.retractRam();
-      cl.reverseRight(2205);
-      cl.runLeft(2500);
-    }
-
-    if (weeb.getRawButton(8)) {
-      cl.reverseRight(500);
-      cl.runLeft(567);
-    }
-
-    // WRITE SET HIGH AND SET LOW POS (TUNE!!)
-    // Make faster pulley
-    // Tune in coe the pulleys lining up
-
-    if (weeb.getRawButton(10) || !readyToClimb) {
-      if (beginClimbingSeq == 0) {
-        beginClimbingSeq = System.currentTimeMillis();
-        readyToClimb = false;
+    if(j.getRawButton(8)) {
+      if(heading.getDouble(0.0) < 0) {
+        dt.drive(0, 0, -.25);
+      } else if (heading.getDouble(0.0) < 1.5 && heading.getDouble(0.0) > .5) {
+        dt.drive(0,0, .25); 
       } else {
-        cl.retractArms();
-        if (System.currentTimeMillis() - beginClimbingSeq > 200
-            && System.currentTimeMillis() - beginClimbingSeq < 2000) {
-          cl.reverseLeft(2500);
-          cl.runRight(2205);
-        } else if (System.currentTimeMillis() - beginClimbingSeq > 3300) {
-          cl.stopRight();
-          cl.stopLeft();
-        }
-        if (System.currentTimeMillis() - beginClimbingSeq > 1000
-            && System.currentTimeMillis() - beginClimbingSeq < 6100) {
-          cl.extendArms();
-        }
-        if (System.currentTimeMillis() - beginClimbingSeq > 3500) {
-          cl.retractArms();
-          readyToClimb = true;
-          beginClimbingSeq = 0;
-        }
+        dt.drive(.4, 0, 0);
+        sh.runIntake();
       }
     }
+
+
+    cl.checkClimb(weeb);
+ 
   }
 
   /** This function is called once when the robot is disabled. */
@@ -239,5 +203,5 @@ public class Robot extends TimedRobot {
   public void testPeriodic() {
 
   }
-
+  
 }

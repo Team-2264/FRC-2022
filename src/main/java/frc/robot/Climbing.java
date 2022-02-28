@@ -28,7 +28,6 @@ public class Climbing {
     Variables varLib;
 
     double beginClimbingSeq;
-    boolean doingClimbing;
     int buttonPressed;
 
     double encoderLeftInit, encoderRightInit;
@@ -50,6 +49,8 @@ public class Climbing {
 
         leftClimbing.setNeutralMode(NeutralMode.Brake);
 
+        leftClimbing.setInverted(false);
+
         rightClimbing.configFactoryDefault();
         rightClimbing.config_kP(0, Variables.hangar_kP);
         rightClimbing.config_kI(0, Variables.shooterBottom_kI);
@@ -58,11 +59,14 @@ public class Climbing {
 
         rightClimbing.setNeutralMode(NeutralMode.Brake);
 
+        rightClimbing.setInverted(true);
+
         compressor.enableDigital();
 
         beginClimbingSeq = 0;
-        doingClimbing = false;
+
         buttonPressed = 0;
+
 
         encoderLeftInit = leftClimbing.getSelectedSensorPosition();
         encoderRightInit = rightClimbing.getSelectedSensorPosition();
@@ -70,13 +74,13 @@ public class Climbing {
     
 
     public void runClimber() {
-        rightClimbing.set(ControlMode.Velocity, convertToUnitsPer100ms(-500));
+        rightClimbing.set(ControlMode.Velocity, convertToUnitsPer100ms(500));
         leftClimbing.set(ControlMode.Velocity, convertToUnitsPer100ms(567));
     }
 
     public void reverseClimber() {
         rightClimbing.set(ControlMode.Velocity, convertToUnitsPer100ms(500));
-        leftClimbing.set(ControlMode.Velocity, convertToUnitsPer100ms(-567));
+        leftClimbing.set(ControlMode.Velocity, convertToUnitsPer100ms(567));
     }
 
     // Move winches out (extend rope)
@@ -86,13 +90,13 @@ public class Climbing {
     }
 
     public void runRight(int rpm) {
-        rightClimbing.set(ControlMode.Velocity, convertToUnitsPer100ms(-1 * rpm));
+        rightClimbing.set(ControlMode.Velocity, convertToUnitsPer100ms(rpm));
     }
 
     // Move winches in (bring in rope)
 
     public void reverseLeft(int rpm) {
-        leftClimbing.set(ControlMode.Velocity, convertToUnitsPer100ms(-1 * rpm));
+        leftClimbing.set(ControlMode.Velocity, convertToUnitsPer100ms(rpm));
     }
 
     public void reverseRight(int rpm) {
@@ -140,11 +144,15 @@ public class Climbing {
       return rightClimbing.getSelectedSensorPosition() - encoderRightInit;
     }
 
+    public double currentTime() {
+      return System.currentTimeMillis();
+    }
+
     public void checkClimb(Joystick weeb) {
       SmartDashboard.putNumber("Arm Left", leftEncoderDisplacement());
       SmartDashboard.putNumber("Arm Right", rightEncoderDisplacement());
         
-      if(!doingClimbing) {
+      if(buttonPressed == 0) {
         if(weeb.getRawButton(3)) {
             extendArms();
         } else if(weeb.getRawButton(1)) {
@@ -162,7 +170,6 @@ public class Climbing {
         } else if (weeb.getRawAxis(1) < 0) {
           runClimber();
         } else {
-
           if((weeb.getRawAxis(3) > 0)) {
             runRight(2205);
           } else if (weeb.getRawButton(6)) {
@@ -181,31 +188,27 @@ public class Climbing {
         }
       }  
 
-      if((weeb.getRawButton(7) && (buttonPressed == 0 || buttonPressed == 7))) {
-        
-        buttonPressed = 7;
-
-        if(doingClimbing) {
-          reverseLeft(2500);
-          reverseRight(2205);
-        } else {
+      if(weeb.getRawButton(7) && (buttonPressed == 0 || buttonPressed == 7)) {
+        if(beginClimbingSeq == 0) {
           retractArms();
           retractRam();
-          doingClimbing = true;
-        }
-      } else {
-        if(doingClimbing == true && buttonPressed == 7) {
-          buttonPressed = 0;
-          doingClimbing = false;
-        }
+          beginClimbingSeq = currentTime();
+          buttonPressed = 7;
+        } else if (currentTime() - beginClimbingSeq > 1000) {
+          reverseLeft(2500);
+          reverseRight(2205);
+        }  
+      } else if(buttonPressed == 7) {
+        stopRight();
+        stopLeft();
+        buttonPressed = 0;
+        beginClimbingSeq = 0;
       }
 
       if((weeb.getRawButton(8) && buttonPressed == 0) || buttonPressed == 8) {
-        doingClimbing = true;
-        buttonPressed = 8;
+        if(buttonPressed == 0) buttonPressed = 8;
 
         if(leftEncoderDisplacement() < 0 && rightEncoderDisplacement() < 0) {
-          doingClimbing = false;
           buttonPressed = 0;
         } else {
           extendArms();
@@ -225,11 +228,9 @@ public class Climbing {
       }
 
       if((weeb.getRawButton(9) && buttonPressed == 0) || buttonPressed == 9) {
-        doingClimbing = true;
-        buttonPressed = 9;
+        if(buttonPressed == 0) buttonPressed = 9;
 
         if(leftEncoderDisplacement() < 0 && rightEncoderDisplacement() < 0) {
-          doingClimbing = false;
           buttonPressed = 0;
         } else {
           if(leftEncoderDisplacement() < 0) {
@@ -248,30 +249,27 @@ public class Climbing {
       }
 
       if((weeb.getRawButton(10) && buttonPressed == 0) || buttonPressed == 10) {
-        
-
         if(beginClimbingSeq == 0) {
-          beginClimbingSeq = System.currentTimeMillis();
-          doingClimbing = true;
+          beginClimbingSeq = currentTime();
           buttonPressed = 10;
         } else {
-          retractArms();
           extendRam();
-          if(System.currentTimeMillis() - beginClimbingSeq > 200 &&  System.currentTimeMillis() - beginClimbingSeq < 2000) {
+          if(currentTime() - beginClimbingSeq > 1000 &&  System.currentTimeMillis() - beginClimbingSeq < 1200) {
+            retractArms();
+          } 
+          if(currentTime() - beginClimbingSeq > 1200) {
             runLeft(2500);
             runRight(2205);
-          } else if(System.currentTimeMillis() - beginClimbingSeq > 3300) {
+          } else if(currentTime() - beginClimbingSeq > 2800) {
             stopRight();
             stopLeft();
           }
-          if(System.currentTimeMillis() - beginClimbingSeq > 1000 && System.currentTimeMillis() - beginClimbingSeq < 6100) {
+          if(currentTime() - beginClimbingSeq > 1800 && System.currentTimeMillis() - beginClimbingSeq < 2000) {
             extendArms();
           }
-          if(System.currentTimeMillis() - beginClimbingSeq > 3500) {
+          if(currentTime() - beginClimbingSeq > 3000) {
             retractArms();
             beginClimbingSeq = 0;
-
-            doingClimbing = false;
             buttonPressed = 0;
           }
         }

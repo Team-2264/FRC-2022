@@ -55,10 +55,15 @@ public class Shooter {
 
     // SMARTDASHBOARD SETUP
 
-    public void smartdashboardShooterInit() {
+    public void smartdashboardShooterInitTest() {
         SmartDashboard.putNumber("ShooterBottom", 500);
         SmartDashboard.putNumber("ShooterBottomVel", 0);
         SmartDashboard.putNumber("ShooterTop", 500);
+        SmartDashboard.putNumber("ShooterTopVel", 0);
+    }
+
+    public void smartdashboardShooterInit() {
+        SmartDashboard.putNumber("ShooterBottomVel", 0);
         SmartDashboard.putNumber("ShooterTopVel", 0);
     }
 
@@ -83,11 +88,18 @@ public class Shooter {
     }
 
     public boolean smartShoot(double dist, double tx, DriveTrain dt, Intake in) {
-        if(Math.abs(tx) - 1 > 1.5) {
+        if(Math.abs(tx) - 1 > 3) {
             if(tx > 0) {
-                dt.drive(0, 0, -.125);
+                dt.drive(0, 0, -.2);
             } else {
-                dt.drive(0, 0, .125);
+                dt.drive(0, 0, .2);
+            }
+            return false;
+        } else if(Math.abs(tx) - 1 > 1.5) { 
+            if(tx > 0) {
+                dt.drive(0, 0, -.1);
+            } else {
+                dt.drive(0, 0, .1);
             }
             return false;
         } else { 
@@ -97,7 +109,7 @@ public class Shooter {
                 if(getRPMThree(dist) != 0) {
                     shooterBottom.set(ControlMode.Velocity, -1 * convertToUnitsPer100ms(getRPMThree(dist)));
                     shooterTop.set(ControlMode.Velocity, convertToUnitsPer100ms(getRPMThree(dist)));
-                }
+                } 
                 if(System.currentTimeMillis() - lastLimed > 1000) {
                     in.runIndex();
                 }

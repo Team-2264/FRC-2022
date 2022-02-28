@@ -89,12 +89,13 @@ public class DriveTrain {
         startBackUpTime = System.currentTimeMillis();
 
         if (System.currentTimeMillis() - startBackUpTime < 1000) {
-            // Should this be in here??
             drive(0, -0.5, 0);
+        } else {
+            crossedLine = true;
+            fullStop();
         }
 
-        crossedLine = true;
-        fullStop();
+        
     }
 
     public void driveForward() {

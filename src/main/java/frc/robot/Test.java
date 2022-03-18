@@ -115,9 +115,4 @@ public class Test {
         return unitsPer100;
     }
 
-    private double convertToRPM(double input) {
-        // This function converts the unit, called "unit," that the motors use into RPM.
-        return ((int) input * 600) / 2048;
-    }
-
 }

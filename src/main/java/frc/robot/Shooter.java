@@ -1,12 +1,8 @@
 package frc.robot;
 
-import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
-import com.ctre.phoenix.motorcontrol.can.TalonFX;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
 
-import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-
 import com.ctre.phoenix.motorcontrol.ControlMode;
 
 public class Shooter {
@@ -21,6 +17,10 @@ public class Shooter {
     double lastLimed;
 
     public Shooter() {
+
+        SmartDashboard.putNumber("ShooterBottom", 0);
+        SmartDashboard.putNumber("ShooterTop", 0);
+
         shooterTop = new WPI_TalonFX(Variables.shooterMotorTopPort);
         shooterBottom = new WPI_TalonFX(Variables.shooterMotorBottomPort);
         intakeMotor = new WPI_TalonFX(Variables.intakeMotorPort);
@@ -80,6 +80,12 @@ public class Shooter {
         manualShooting = true;
     }
 
+    public void manualShootTwo() {
+        shooterBottom.set(ControlMode.Velocity, convertToUnitsPer100ms(-1000));
+        shooterTop.set(ControlMode.Velocity, -1 * convertToUnitsPer100ms(-1000));
+        manualShooting = true;
+    }
+
     public void manualShootReverse() {
         shooterBottom.set(ControlMode.Velocity,
                 convertToUnitsPer100ms(SmartDashboard.getNumber("ShooterBottom", 0)));
@@ -88,29 +94,36 @@ public class Shooter {
     }
 
     public boolean smartShoot(double dist, double tx, DriveTrain dt, Intake in) {
-        if(Math.abs(tx) - 1 > 3) {
-            if(tx > 0) {
+        if (Math.abs(tx) - 1 > 3) {
+            if (tx > 0) {
                 dt.drive(0, 0, -.2);
             } else {
                 dt.drive(0, 0, .2);
             }
             return false;
-        } else if(Math.abs(tx) - 1 > 1.5) { 
-            if(tx > 0) {
+        } else if (Math.abs(tx) - 1 > 1.5) {
+            if (tx > 0) {
                 dt.drive(0, 0, -.1);
             } else {
                 dt.drive(0, 0, .1);
             }
             return false;
-        } else { 
-            if(lastLimed == 0.0) {
+        } else if (Math.abs(tx) - 1 > .5) {
+            if (tx > 0) {
+                dt.drive(0, 0, -.05);
+            } else {
+                dt.drive(0, 0, .05);
+            }
+            return false;
+        } else {
+            if (lastLimed == 0.0) {
                 lastLimed = System.currentTimeMillis();
             } else {
-                if(getRPMThree(dist) != 0) {
+                if (getRPMThree(dist) != 0) {
                     shooterBottom.set(ControlMode.Velocity, -1 * convertToUnitsPer100ms(getRPMThree(dist)));
                     shooterTop.set(ControlMode.Velocity, convertToUnitsPer100ms(getRPMThree(dist)));
-                } 
-                if(System.currentTimeMillis() - lastLimed > 1000) {
+                }
+                if (System.currentTimeMillis() - lastLimed > 1000) {
                     in.runIndex();
                 }
             }
@@ -123,23 +136,23 @@ public class Shooter {
     }
 
     public double getRPM(double dist) {
-        SmartDashboard.putNumber("RPM", Math.sqrt(125*dist - 100));
-        return 100 * Math.sqrt(125*dist - 100);
+        SmartDashboard.putNumber("RPM", Math.sqrt(125 * dist - 100));
+        return 100 * Math.sqrt(125 * dist - 100);
     }
 
     public double getRPMTwo(double dist) {
-        if(dist > 15.1 || dist < 15) {
-            SmartDashboard.putNumber("RPM", 1.15*(Math.sqrt((162*(dist + 1.1))) - 252) + 5);
-            return (100 * Math.sqrt(125*dist - 100));
+        if (dist > 15.1 || dist < 15) {
+            SmartDashboard.putNumber("RPM", 1.15 * (Math.sqrt((162 * (dist + 1.1))) - 252) + 5);
+            return (100 * Math.sqrt(125 * dist - 100));
         } else {
             return 0;
         }
     }
 
     public double getRPMThree(double dist) {
-        if(dist > 15.1 || dist < 15) {
-            SmartDashboard.putNumber("RPM", (-4.6296*(dist*dist)+214.8148*(dist)+1678.5648));
-            return (-4.6296*(dist*dist)+214.8148*(dist)+1678.5648);
+        if (dist > 15.1 || dist < 15) {
+            SmartDashboard.putNumber("RPM", (-4.6296 * (dist * dist) + 214.8148 * (dist) + 1678.5648));
+            return (-4.6296 * (dist * dist) + 214.8148 * (dist) + 1678.5648);
         } else {
             return 0;
         }
@@ -152,7 +165,6 @@ public class Shooter {
     public void stopIntake() {
         intakeMotor.set(ControlMode.Velocity, convertToUnitsPer100ms(0));
     }
-
 
     public void stopShoot() {
         shooterBottom.set(ControlMode.PercentOutput, 0);
@@ -250,10 +262,4 @@ public class Shooter {
         // This function converts the unit, called "unit," that the motors use into RPM.
         return ((int) input * 600) / 2048;
     }
-
-    private void sliderUpdate(Joystick j) {
-        SmartDashboard.putNumber("ShooterBottom", 1000);
-        SmartDashboard.putNumber("ShooterTop", 1000);
-    }
-
 }

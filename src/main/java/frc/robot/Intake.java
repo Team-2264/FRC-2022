@@ -1,14 +1,11 @@
 package frc.robot;
 
-import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
-
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.networktables.NetworkTableEntry;
 
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class Intake {
     NetworkTable networkTable;
@@ -16,7 +13,7 @@ public class Intake {
     NetworkTableEntry objectAtBottom;
 
     WPI_TalonSRX indexMotor;
-    
+
     int ballsIn;
     long indexTime;
 
@@ -83,11 +80,6 @@ public class Intake {
         double unitsPerMinute = (rpm * 2048);
         double unitsPer100 = unitsPerMinute / 600;
         return unitsPer100;
-    }
-
-    private double convertToRPM(double input) {
-        // This function converts the unit, called "unit," that the motors use into RPM.
-        return ((int) input * 600) / 2048;
     }
 
 }

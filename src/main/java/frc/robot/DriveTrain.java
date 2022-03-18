@@ -1,10 +1,14 @@
 package frc.robot;
 
+import java.util.ResourceBundle.Control;
+
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 
 import edu.wpi.first.wpilibj.Joystick;
+import edu.wpi.first.wpilibj.PS4Controller;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj.drive.MecanumDrive;
+import com.ctre.phoenix.motorcontrol.NeutralMode;
 
 public class DriveTrain {
 
@@ -32,7 +36,7 @@ public class DriveTrain {
 
     final double speed = 0.7;
 
-    public static long startBackUpTime;
+    public long startBackUpTime;
 
     public WPI_TalonSRX backLeft;
     public WPI_TalonSRX backRight;
@@ -53,6 +57,11 @@ public class DriveTrain {
         frontRight.setInverted(true);
         backRight.setInverted(true);
 
+        frontLeft.setNeutralMode(NeutralMode.Brake);
+        backRight.setNeutralMode(NeutralMode.Brake);
+        frontRight.setNeutralMode(NeutralMode.Brake);
+        backLeft.setNeutralMode(NeutralMode.Brake);
+
         mDrive = new MecanumDrive(frontLeft, backLeft, frontRight, backRight);
         mDrive.setSafetyEnabled(false);
 
@@ -66,7 +75,12 @@ public class DriveTrain {
     }
 
     public void mecDrive(Joystick j) {
-        mDrive.driveCartesian(-0.4 * j.getY(), 0.25 * j.getX(), 0.35 * j.getZ());
+        mDrive.driveCartesian(-0.25 * j.getY(), 0.17 * j.getX(), 0.2 * j.getZ());
+    }
+
+    public void mecDrive(PS4Controller controller) {
+        mDrive.driveCartesian(-0.4 * controller.getLeftY(), 0.3 * controller.getLeftX(),
+                0.2 * controller.getRightX());
     }
 
     public void drive(double x, double y, double z) {
@@ -86,16 +100,14 @@ public class DriveTrain {
     }
 
     public void backUp() {
-        startBackUpTime = System.currentTimeMillis();
 
         if (System.currentTimeMillis() - startBackUpTime < 1000) {
-            drive(0, -0.5, 0);
+            drive(-0.25, 0, 0);
         } else {
             crossedLine = true;
             fullStop();
         }
 
-        
     }
 
     public void driveForward() {

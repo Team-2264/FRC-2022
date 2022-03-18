@@ -6,15 +6,13 @@ package frc.robot;
 
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.Joystick;
-
-import java.util.ResourceBundle.Control;
-
-import com.ctre.phoenix.motorcontrol.ControlMode;
-import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
-import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
-
+import edu.wpi.first.wpilibj.PS4Controller;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
+import com.ctre.phoenix.motorcontrol.ControlMode;
+
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.networktables.NetworkTableEntry;
@@ -36,14 +34,17 @@ public class Robot extends TimedRobot {
   public Intake in;
   public Climbing cl;
   public AutoController au;
+  public PathFinder pf;
+  public Odometry od;
 
   public Joystick j;
   public Joystick weeb;
 
+  PS4Controller dualsense;
+
   NetworkTable table;
 
   NetworkTableEntry heading;
-
 
   /**
    * This function is run when the robot is first started up and should be used
@@ -59,9 +60,13 @@ public class Robot extends TimedRobot {
     in = new Intake();
     cl = new Climbing();
     au = new AutoController();
-    
+    od = new Odometry();
+    pf = new PathFinder(od, dt);
+
     j = new Joystick(0);
     weeb = new Joystick(1);
+
+    dualsense = new PS4Controller(3);
 
     se.smartdashboardSensorsInit();
 
@@ -92,6 +97,13 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void robotPeriodic() {
+    se.updateSensorsPlaceNumbers();
+    SmartDashboard.putNumber("Heading", heading.getDouble(0.0));
+
+    SmartDashboard.putNumber("Gyro", od.getGyroAngle());
+    SmartDashboard.putNumber("X", od.getX());
+    SmartDashboard.putNumber("Y", od.getY());
+
   }
 
   /**
@@ -113,73 +125,99 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void autonomousInit() {
-    dt.backUp();
+
+    heading.setDouble(2.0);
+
+    pf.runTest(od, dt);
+
+    od.gyro.reset();
+
+    od.currentPose = new Pose2d(0.0, 0.0, new Rotation2d());
+
   }
 
   /** This function is called periodically during autonomous. */
   @Override
   public void autonomousPeriodic() {
 
+    od.updateOdometry(dt);
+
+    pf.pathfinder.tick();
+    SmartDashboard.putNumber("Gyro", od.getGyroAngle());
+    SmartDashboard.putNumber("X", od.getX());
+    SmartDashboard.putNumber("Y", od.getY());
+
   }
 
   /** This function is called once when teleop is enabled. */
   @Override
   public void teleopInit() {
-    
+    cl.resetEncoders();
+    pf.pathfinder.clearTasks();
+    od.gyro.reset();
   }
 
   /** This function is called periodically during operator control. */
   @Override
   public void teleopPeriodic() {
 
-    SmartDashboard.putNumber("Heading", heading.getDouble(0.0));
+    od.updateOdometry(dt);
 
     sh.updateShooterMotorSpeeds();
 
-    se.updateSensorsPlaceNumbers();
+    if (dualsense.getL2Button()) {
+      sh.runIntake();
+    }
 
-    dt.mecDrive(j);
+    dt.mecDrive(dualsense);
 
-    au.index(j, in, sh, se);
+    au.index(j, in, sh, se, dualsense);
 
-    // Shooting
+    // ---------------- Shooting ----------------
 
-    if(j.getRawButton(1)) {
+    if (dualsense.getR2Button()) {
       sh.smartShoot(se.calcDistance(), se.getTX(), dt, in);
       SmartDashboard.putBoolean("Shooter", true);
-    } else {
+    } else if (!dualsense.getR1Button()) {
       sh.lastLimed = 0.0;
       sh.stopShoot();
       SmartDashboard.putBoolean("Shooter", false);
     }
 
-    // AIMBOT INTAKE
+    // ---------------- AIMBOT INTAKE ----------------
 
-    if(j.getRawButton(7)) {
-      if(heading.getDouble(0.0) < 0) {
+    if (j.getRawButton(7)) {
+      if (heading.getDouble(0.0) < 0) {
         dt.drive(0, 0, -.1);
       } else if (heading.getDouble(0.0) < 1.5 && heading.getDouble(0.0) > .5) {
-        dt.drive(0,0, .1); 
+        dt.drive(0, 0, .1);
       } else {
-        dt.drive(.2, 0, 0);
+        dt.drive(.24, 0, 0);
         sh.runIntake();
       }
     }
 
-    if(j.getRawButton(8)) {
-      if(heading.getDouble(0.0) < 0) {
-        dt.drive(0, 0, -.25);
+    // ---------------- regular intake ----------------
+
+    if (j.getRawButton(8)) {
+      if (heading.getDouble(0.0) < 0) {
+        dt.drive(0, 0, -.15);
       } else if (heading.getDouble(0.0) < 1.5 && heading.getDouble(0.0) > .5) {
-        dt.drive(0,0, .25); 
+        dt.drive(0, 0, .15);
       } else {
-        dt.drive(.4, 0, 0);
+        dt.drive(.3, 0, 0);
         sh.runIntake();
       }
     }
-
 
     cl.checkClimb(weeb);
- 
+
+    if (sh.intakeMotor.getSelectedSensorVelocity() != 0) {
+      SmartDashboard.putBoolean("Intake", true);
+    } else {
+      SmartDashboard.putBoolean("Intake", false);
+    }
+
   }
 
   /** This function is called once when the robot is disabled. */
@@ -203,5 +241,5 @@ public class Robot extends TimedRobot {
   public void testPeriodic() {
 
   }
-  
+
 }

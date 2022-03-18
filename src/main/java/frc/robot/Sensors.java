@@ -18,7 +18,7 @@ public class Sensors {
 
     private NetworkTable limeTable;
 
-    private DigitalInput bbFrontOpen, bbFrontClosed, bbBackOpen, bbBackClosed;
+    private DigitalInput bbFrontClosed, bbBackClosed;
 
     Thread m_visionThread;
 
@@ -28,20 +28,17 @@ public class Sensors {
     public Sensors() {
         d = 0;
 
-        beamsBroken = new boolean[4];
+        beamsBroken = new boolean[2];
         beamsBroken[0] = false;
         beamsBroken[1] = false;
-        beamsBroken[2] = false;
-        beamsBroken[3] = false;
 
         height = Variables.height;
         offset = Variables.offset;
 
         // Beam Break setup
-        bbFrontOpen = new DigitalInput(0);
-        bbFrontClosed = new DigitalInput(1);
-        bbBackOpen = new DigitalInput(2);
-        bbBackClosed = new DigitalInput(3);
+
+        bbFrontClosed = new DigitalInput(0);
+        bbBackClosed = new DigitalInput(1);
 
         // Limelight setup
         limeTable = NetworkTableInstance.getDefault().getTable("limelight");
@@ -98,15 +95,9 @@ public class Sensors {
         return beamsBroken;
     }
 
-    public boolean getFrontBeamBroken() {
-        return beamsBroken[1];
-    }
-
     private void updateBeamBreaks() {
-        beamsBroken[0] = bbFrontOpen.get();
-        beamsBroken[1] = bbFrontClosed.get();
-        beamsBroken[2] = bbBackOpen.get();
-        beamsBroken[3] = bbBackClosed.get();
+        beamsBroken[1] = !bbFrontClosed.get();
+        beamsBroken[0] = !bbBackClosed.get();
     }
 
     // Camera
@@ -155,29 +146,36 @@ public class Sensors {
     }
 
     public boolean backStatus() {
-        return beamsBroken[3];
+        return beamsBroken[0];
     }
 
     // SMARTDASHBOARD CODE
 
     public void smartdashboardSensorsInit() {
-        SmartDashboard.putNumber("Angle", Variables.offset);
-        SmartDashboard.putNumber("Height", Variables.height);
-        
-        SmartDashboard.putBoolean("Beam Front Open", false);
+
         SmartDashboard.putBoolean("Beam Front Closed", false);
-        SmartDashboard.putBoolean("Beam Back Open", false);
         SmartDashboard.putBoolean("Beam Back Closed", false);
     }
 
     private void updateSmartDashboardSensors() {
         SmartDashboard.putNumber("Distance", calcDistance());
 
-        SmartDashboard.putBoolean("Beam Front Open", beamsBroken[0]);
-        SmartDashboard.putBoolean("Beam Front Closed", beamsBroken[1]);
-        SmartDashboard.putBoolean("Beam Back Open", beamsBroken[2]);
-        SmartDashboard.putBoolean("Beam Back Closed", beamsBroken[3]);
+        SmartDashboard.putBoolean("Beam Front Closed", beamsBroken[0]);
+        SmartDashboard.putBoolean("Beam Back Closed", beamsBroken[1]);
     }
 
-
 }
+// santa 🎅🏿 -> actually Dhariya
+// System.out.println("Santa Claus");
+/**
+ * public static void main(String[] args){
+ * Scanner rd = new Scanner(system.in);
+ * int height_cm;
+ * System.out.println("Dhariya's height: ")
+ * height_cm = rd.nextInt();
+ * System.out.println("Doesn't matter, Dhairya still short");
+ * 
+ * }
+ * Program very good
+ * 
+ */

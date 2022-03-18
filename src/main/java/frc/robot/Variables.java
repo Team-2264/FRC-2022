@@ -20,18 +20,15 @@ public class Variables {
     // Shooter and Control Panel speeds
     public static final double shooterBottom_kP = 0.15;
     public static final double shooterBottom_kI = 0.0;
-    public static final double shooterBottom_kD = 0;
+    public static final double shooterBottom_kD = 0.0;
     public static final double shooterBottom_kF = 0.0463;
 
     public static final double shooterTop_kP = 0.15;
     public static final double shooterTop_kI = 0.0;
-    public static final double shooterTop_kD = 0;
+    public static final double shooterTop_kD = 0.0;
     public static final double shooterTop_kF = 0.0463;
 
     public static final double hangar_kP = 0.07;
-    // public static final double shooterBottom_kI = 0.0;
-    // public static final double shooterBottom_kD = 0;
-    // public static final double shooterBottom_kF = 0.0463;
 
     // Sensors
 
@@ -52,5 +49,7 @@ public class Variables {
     public static final int ramForward = 6;
     public static final int ramBackward = 7;
 
+    public static final double frontBackDistance = .508;
+    public static final double rightLeftDistance = .457;
 
 }

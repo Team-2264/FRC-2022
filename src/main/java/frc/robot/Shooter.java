@@ -132,7 +132,7 @@ public class Shooter {
     }
 
     public void runIntake() {
-        intakeMotor.set(ControlMode.Velocity, convertToUnitsPer100ms(-1000));
+        intakeMotor.set(ControlMode.Velocity, convertToUnitsPer100ms(-800));
     }
 
     public double getRPM(double dist) {

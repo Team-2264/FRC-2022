@@ -1,24 +1,24 @@
 package frc.robot;
 
-import com.ctre.phoenix.motorcontrol.ControlMode;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.networktables.NetworkTableEntry;
 
-import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
+import com.revrobotics.CANSparkMax;
+import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
 public class Intake {
     NetworkTable networkTable;
     NetworkTableEntry heading;
     NetworkTableEntry objectAtBottom;
 
-    WPI_TalonSRX indexMotor;
+    CANSparkMax indexMotor;
 
     int ballsIn;
     long indexTime;
 
     public Intake() {
-        indexMotor = new WPI_TalonSRX(Variables.indexMotorPort);
+        indexMotor = new CANSparkMax(Variables.indexMotorPort, MotorType.kBrushless);
         // ballsIn = 0;
         NetworkTableInstance instance = NetworkTableInstance.getDefault();
 
@@ -62,15 +62,15 @@ public class Intake {
     // Run motors
 
     public void runIndex() {
-        indexMotor.set(ControlMode.Velocity, convertToUnitsPer100ms(-4000));
+        indexMotor.set(0.01);
     }
 
     public void reverseIndex() {
-        indexMotor.set(ControlMode.Velocity, convertToUnitsPer100ms(4000));
+        indexMotor.set(-0.01);
     }
 
     public void stopIndex() {
-        indexMotor.set(ControlMode.Velocity, 0);
+        indexMotor.set(0);
     }
 
     // Put the number of currrent balls on the smartdashboard

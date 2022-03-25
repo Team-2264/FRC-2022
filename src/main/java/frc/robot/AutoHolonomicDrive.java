@@ -22,11 +22,12 @@ public class AutoHolonomicDrive {
 
     }
 
-    public void getAdjustedChassisSpeeds(Odometry od, SplineExample sp) {
+    public ChassisSpeeds getAdjustedChassisSpeeds(Odometry od, SplineExample sp) {
         trajectory = sp.getTrajectory();
         Trajectory.State goal = trajectory.sample(3.4);
         ChassisSpeeds adjustedSpeeds = controller.calculate(
                 new Pose2d(od.getX(), od.getY(), od.getGyroHeading()), goal, Rotation2d.fromDegrees(70.0));
+        return adjustedSpeeds;
     }
 
 }

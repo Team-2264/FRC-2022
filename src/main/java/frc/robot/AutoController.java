@@ -2,52 +2,50 @@ package frc.robot;
 
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.PS4Controller;
+import me.wobblyyyy.pathfinder2.utils.DualJoystick;
+import com.revrobotics.CANSparkMax;
 
 public class AutoController {
 
   boolean indexingMode;
+  long reverseTime;
 
   public AutoController() {
     indexingMode = false;
+    reverseTime = 0;
   }
 
-  public void index(Joystick j, Intake in, Shooter sh, Sensors se, PS4Controller dualsense) {
-    if (!indexingMode) {
-      if (dualsense.getL2Button() || j.getRawButton(12) || (!se.frontStatus() && se.backStatus())) {
-        if (j.getRawButton(12)) {
-          sh.reverseIntake();
-          in.reverseIndex();
-        } else if (!se.frontStatus() && se.backStatus()) {
-          indexingMode = true;
-        } else if (se.backStatus() && se.frontStatus()) {
-          in.runIndex();
-          sh.runIntake();
-        } else if (se.frontStatus() && !se.backStatus()) {
-          in.stopIndex();
-          sh.runIntake();
-        } else {
-          in.stopIndex();
-          sh.runIntake();
+  public void index(Intake in, Shooter sh, Sensors se, PS4Controller dualsense) {
+
+    if (dualsense.getCircleButton()) {
+      in.resetLock();
+    }
+
+    if (dualsense.getR2Button() || dualsense.getR1Button()) {
+      in.resetLock();
+    } else if (dualsense.getL1Button()) {
+      in.runIndex();
+      in.resetLock();
+    } else {
+
+      if ((!se.frontStatus() && se.backStatus()) || indexingMode) {
+        indexingMode = true;
+        in.reverseIndexSpecial();
+
+        if (!se.backStatus()) {
+
+          indexingMode = false;
+          reverseTime = 0;
+
         }
 
+        in.resetLock();
       } else {
-        if (!j.getRawButton(7) && !j.getRawButton(8)) {
-          sh.stopIntake();
-        }
-        if (!j.getRawButton(1) && !j.getRawButton(6)) {
-          in.stopIndex();
-        }
+        in.stopIndex();
+        in.lockMotor();
       }
-    } else {
-      in.runIndex();
-      if (!se.backStatus()) {
-        indexingMode = false;
-      }
-      if (j.getRawButton(3)) {
-        sh.runIntake();
-      } else {
-        sh.stopIntake();
-      }
+
     }
+
   }
 }

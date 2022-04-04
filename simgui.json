@@ -1,6 +1,11 @@
 {
   "HALProvider": {
     "Other Devices": {
+      "Talon SRX[2]": {
+        "header": {
+          "open": true
+        }
+      },
       "Talon SRX[4]": {
         "header": {
           "open": true
@@ -23,7 +28,16 @@
       "/LiveWindow/Ungrouped/Talon FX [6]": "Motor Controller",
       "/LiveWindow/Ungrouped/Talon FX [7]": "Motor Controller",
       "/LiveWindow/Ungrouped/Talon FX [9]": "Motor Controller",
-      "/LiveWindow/Ungrouped/Talon SRX [8]": "Motor Controller"
+      "/LiveWindow/Ungrouped/Talon SRX [8]": "Motor Controller",
+      "/SmartDashboard/Field": "Field2d"
+    }
+  },
+  "NetworkTables": {
+    "SmartDashboard": {
+      "Field": {
+        "open": true
+      },
+      "open": true
     }
   }
 }

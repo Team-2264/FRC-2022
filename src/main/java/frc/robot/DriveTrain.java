@@ -75,12 +75,19 @@ public class DriveTrain {
     }
 
     public void mecDrive(Joystick j) {
-        mDrive.driveCartesian(-0.25 * j.getY(), 0.17 * j.getX(), 0.2 * j.getZ());
+        mDrive.driveCartesian(-0.23 * j.getY(), 0.15 * j.getX(), 0.18 * j.getZ());
     }
 
     public void mecDrive(PS4Controller controller) {
-        mDrive.driveCartesian(-0.4 * controller.getLeftY(), 0.3 * controller.getLeftX(),
-                0.2 * controller.getRightX());
+        mDrive.driveCartesian(-0.35 * controller.getLeftY(), 0.4 * controller.getLeftX(),
+                0.3 * controller.getRightX());
+
+    }
+
+    public void mecDriveTurbo(PS4Controller controller) {
+        mDrive.driveCartesian(-0.5 * controller.getLeftY(), 0.8 * controller.getLeftX(),
+                0.45 * controller.getRightX());
+
     }
 
     public void drive(double x, double y, double z) {

@@ -2,10 +2,15 @@ package frc.robot;
 
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableInstance;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.networktables.NetworkTableEntry;
 
 import com.revrobotics.CANSparkMax;
+import com.revrobotics.CANSparkMax.IdleMode;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
+
+import com.revrobotics.RelativeEncoder;
+import com.revrobotics.SparkMaxPIDController;
 
 public class Intake {
     NetworkTable networkTable;
@@ -17,8 +22,14 @@ public class Intake {
     int ballsIn;
     long indexTime;
 
+    public SparkMaxPIDController m_pidController;
+    private RelativeEncoder m_encoder;
+    public double kP, kI, kD, kIz, kFF, kMaxOutput, kMinOutput, maxRPM, lockPos;
+
     public Intake() {
         indexMotor = new CANSparkMax(Variables.indexMotorPort, MotorType.kBrushless);
+        indexMotor.setIdleMode(IdleMode.kBrake);
+
         // ballsIn = 0;
         NetworkTableInstance instance = NetworkTableInstance.getDefault();
 
@@ -28,6 +39,8 @@ public class Intake {
         // detected
         heading = networkTable.getEntry("heading");
         objectAtBottom = networkTable.getEntry("bottom");
+
+        lockPos = 0;
 
     }
 
@@ -62,15 +75,43 @@ public class Intake {
     // Run motors
 
     public void runIndex() {
-        indexMotor.set(0.01);
+        indexMotor.set(.2);
+    }
+
+    public void runIndexSlow() {
+        // indexMotor.set(.04);
+        indexMotor.set(.04);
     }
 
     public void reverseIndex() {
-        indexMotor.set(-0.01);
+        indexMotor.set(-0.1);
+    }
+
+    public void reverseIndexSpecial() {
+        indexMotor.set(-0.15);
+    }
+
+    public void reverseIndexFast() {
+        indexMotor.set(-0.2);
     }
 
     public void stopIndex() {
-        indexMotor.set(0);
+        indexMotor.stopMotor();
+    }
+
+    public void lockMotor() {
+        if (lockPos == 0) {
+            lockPos = indexMotor.getEncoder().getPosition();
+        } else {
+            SmartDashboard.putNumber("ENCODERDIFF", indexMotor.getEncoder().getPosition() - lockPos);
+            indexMotor.set(-0.4 * (indexMotor.getEncoder().getPosition() + .2 - lockPos));
+        }
+    }
+
+    public void resetLock() {
+        if (lockPos != 0)
+            stopIndex();
+        lockPos = 0;
     }
 
     // Put the number of currrent balls on the smartdashboard

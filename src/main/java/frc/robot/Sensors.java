@@ -43,6 +43,8 @@ public class Sensors {
         // Limelight setup
         limeTable = NetworkTableInstance.getDefault().getTable("limelight");
         limeTable.getEntry("stream").setNumber(2.0);
+
+        cameraInit();
     }
 
     public void updateSensorsPlaceNumbers() {

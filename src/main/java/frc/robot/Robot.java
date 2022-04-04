@@ -46,6 +46,10 @@ public class Robot extends TimedRobot {
 
   NetworkTableEntry heading;
 
+  Pose2d temp, tempAlt;
+
+  boolean turbo;
+
   /**
    * This function is run when the robot is first started up and should be used
    * for any
@@ -82,6 +86,10 @@ public class Robot extends TimedRobot {
     SmartDashboard.putBoolean("Shooter", false);
     SmartDashboard.putBoolean("Intake", false);
 
+    SmartDashboard.putData("Field", od.field);
+
+    turbo = false;
+
   }
 
   /**
@@ -103,6 +111,12 @@ public class Robot extends TimedRobot {
     SmartDashboard.putNumber("Gyro", od.getGyroAngle());
     SmartDashboard.putNumber("X", od.getX());
     SmartDashboard.putNumber("Y", od.getY());
+
+    temp = od.m_odometry.getPoseMeters();
+
+    tempAlt = new Pose2d(temp.getX() / 36, temp.getY() / 36, temp.getRotation());
+
+    od.field.setRobotPose(tempAlt);
 
   }
 
@@ -128,8 +142,6 @@ public class Robot extends TimedRobot {
 
     heading.setDouble(2.0);
 
-    pf.runTest(od, dt);
-
     od.gyro.reset();
 
     od.currentPose = new Pose2d(0.0, 0.0, new Rotation2d());
@@ -143,6 +155,9 @@ public class Robot extends TimedRobot {
     od.updateOdometry(dt);
 
     pf.pathfinder.tick();
+
+    pf.runTest(od, dt, sh, se, in);
+
     SmartDashboard.putNumber("Gyro", od.getGyroAngle());
     SmartDashboard.putNumber("X", od.getX());
     SmartDashboard.putNumber("Y", od.getY());
@@ -161,24 +176,39 @@ public class Robot extends TimedRobot {
   @Override
   public void teleopPeriodic() {
 
+    if (dualsense.getL3ButtonPressed()) {
+      turbo = !turbo;
+    }
+
     od.updateOdometry(dt);
 
     sh.updateShooterMotorSpeeds();
 
     if (dualsense.getL2Button()) {
-      sh.runIntake();
+      sh.runIntakeFast();
+    } else if (dualsense.getL1Button()) {
+      sh.reverseIntake();
+    } else {
+      sh.stopIntake();
     }
 
-    dt.mecDrive(dualsense);
+    if (turbo) {
+      dt.mecDriveTurbo(dualsense);
+    } else {
+      dt.mecDrive(dualsense);
+    }
 
-    au.index(j, in, sh, se, dualsense);
+    au.index(in, sh, se, dualsense);
 
     // ---------------- Shooting ----------------
 
     if (dualsense.getR2Button()) {
       sh.smartShoot(se.calcDistance(), se.getTX(), dt, in);
       SmartDashboard.putBoolean("Shooter", true);
-    } else if (!dualsense.getR1Button()) {
+    } else if (dualsense.getR1Button()) {
+      sh.manualShoot();
+      in.reverseIndex();
+    } else {
       sh.lastLimed = 0.0;
       sh.stopShoot();
       SmartDashboard.putBoolean("Shooter", false);

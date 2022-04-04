@@ -4,6 +4,7 @@ import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
 
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import com.ctre.phoenix.motorcontrol.ControlMode;
+import com.ctre.phoenix.motorcontrol.NeutralMode;
 
 public class Shooter {
 
@@ -49,6 +50,8 @@ public class Shooter {
         shooterTop.setInverted(true);
         shooterBottom.setInverted(true);
 
+        intakeMotor.setNeutralMode(NeutralMode.Coast);
+
         lastLimed = 0.0;
 
     }
@@ -56,14 +59,16 @@ public class Shooter {
     // SMARTDASHBOARD SETUP
 
     public void smartdashboardShooterInitTest() {
-        SmartDashboard.putNumber("ShooterBottom", 500);
+        SmartDashboard.putNumber("ShooterBottom", -750);
         SmartDashboard.putNumber("ShooterBottomVel", 0);
-        SmartDashboard.putNumber("ShooterTop", 500);
+        SmartDashboard.putNumber("ShooterTop", -750);
         SmartDashboard.putNumber("ShooterTopVel", 0);
     }
 
     public void smartdashboardShooterInit() {
+        SmartDashboard.putNumber("ShooterBottom", -750);
         SmartDashboard.putNumber("ShooterBottomVel", 0);
+        SmartDashboard.putNumber("ShooterTop", -750);
         SmartDashboard.putNumber("ShooterTopVel", 0);
     }
 
@@ -102,29 +107,30 @@ public class Shooter {
             }
             return false;
         } else if (Math.abs(tx) - 1 > 1.5) {
-            if (tx > 0) {
+            if (tx > .5) {
                 dt.drive(0, 0, -.1);
             } else {
                 dt.drive(0, 0, .1);
-            }
-            return false;
-        } else if (Math.abs(tx) - 1 > .5) {
-            if (tx > 0) {
-                dt.drive(0, 0, -.05);
-            } else {
-                dt.drive(0, 0, .05);
             }
             return false;
         } else {
             if (lastLimed == 0.0) {
                 lastLimed = System.currentTimeMillis();
             } else {
+
                 if (getRPMThree(dist) != 0) {
                     shooterBottom.set(ControlMode.Velocity, -1 * convertToUnitsPer100ms(getRPMThree(dist)));
                     shooterTop.set(ControlMode.Velocity, convertToUnitsPer100ms(getRPMThree(dist)));
                 }
+
                 if (System.currentTimeMillis() - lastLimed > 1000) {
-                    in.runIndex();
+                    if (dist > 14) {
+                        in.reverseIndexFast();
+                    } else if (dist > 7) {
+                        in.reverseIndexSpecial();
+                    } else {
+                        in.reverseIndexFast();
+                    }
                 }
             }
             return true;
@@ -133,6 +139,10 @@ public class Shooter {
 
     public void runIntake() {
         intakeMotor.set(ControlMode.Velocity, convertToUnitsPer100ms(-800));
+    }
+
+    public void runIntakeFast() {
+        intakeMotor.set(ControlMode.Velocity, convertToUnitsPer100ms(-2000));
     }
 
     public double getRPM(double dist) {
@@ -151,15 +161,24 @@ public class Shooter {
 
     public double getRPMThree(double dist) {
         if (dist > 15.1 || dist < 15) {
-            SmartDashboard.putNumber("RPM", (-4.6296 * (dist * dist) + 214.8148 * (dist) + 1678.5648));
-            return (-4.6296 * (dist * dist) + 214.8148 * (dist) + 1678.5648);
+            SmartDashboard.putNumber("RPM", (-4.6296 * (dist * dist) + 214.8148 * (dist) + 1350.5648));
+            if (dist > 14) {
+                return (-4.6296 * (dist * dist) + 214.8148 * (dist) + 1900.5648);
+            } else if (dist > 9)
+                return (-4.6296 * (dist * dist) + 214.8148 * (dist) + 1800.5648);
+            else
+                return (-4.6296 * (dist * dist) + 214.8148 * (dist) + 1500.5648);
         } else {
             return 0;
         }
     }
 
     public void reverseIntake() {
-        intakeMotor.set(ControlMode.Velocity, convertToUnitsPer100ms(1000));
+        intakeMotor.set(ControlMode.Velocity, convertToUnitsPer100ms(400));
+    }
+
+    public void reverseIntakeSlow() {
+        intakeMotor.set(ControlMode.Velocity, convertToUnitsPer100ms(400));
     }
 
     public void stopIntake() {

@@ -12,6 +12,7 @@ import edu.wpi.first.math.kinematics.MecanumDriveKinematics;
 import edu.wpi.first.math.kinematics.MecanumDriveOdometry;
 import edu.wpi.first.math.kinematics.MecanumDriveWheelSpeeds;
 import edu.wpi.first.wpilibj.ADXRS450_Gyro;
+import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 
 public class Odometry extends AbstractOdometry {
 
@@ -29,7 +30,10 @@ public class Odometry extends AbstractOdometry {
 
     Pose2d currentPose;
 
+    public Field2d field;
+
     public Odometry() {
+
         m_frontLeftLocation = new Translation2d(Variables.frontBackDistance / 2, Variables.rightLeftDistance / 2);
         m_frontRightLocation = new Translation2d(Variables.frontBackDistance / 2, -Variables.rightLeftDistance / 2);
         m_backLeftLocation = new Translation2d(-Variables.frontBackDistance / 2, Variables.rightLeftDistance / 2);
@@ -43,6 +47,8 @@ public class Odometry extends AbstractOdometry {
         m_odometry = new MecanumDriveOdometry(m_kinematics, getGyroHeading(), new Pose2d(0, 0, new Rotation2d()));
 
         currentPose = new Pose2d();
+
+        field = new Field2d();
 
     }
 

@@ -22,6 +22,7 @@ import me.wobblyyyy.pathfinder2.robot.simulated.SimulatedOdometry;
 import me.wobblyyyy.pathfinder2.kinematics.WPIMecanumChassis;
 
 import me.wobblyyyy.pathfinder2.trajectory.Trajectory;
+import me.wobblyyyy.pathfinder2.trajectory.spline.SplineBuilderFactory;
 import me.wobblyyyy.pathfinder2.trajectory.LinearTrajectory;
 
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -43,12 +44,16 @@ public class PathFinder {
     WPI_TalonFXMotor backRight;
     WPI_TalonFXMotor backLeft;
 
+    double stage;
+
     public PathFinder(frc.robot.Odometry od, DriveTrain dt) {
 
         frontRight = new WPI_TalonFXMotor(dt.frontRight);
         frontLeft = new WPI_TalonFXMotor(dt.frontLeft);
         backRight = new WPI_TalonFXMotor(dt.backRight);
         backLeft = new WPI_TalonFXMotor(dt.backLeft);
+
+        stage = 0;
 
         drive = new WPIMecanumChassis(
                 Variables.frontBackDistance,
@@ -62,7 +67,7 @@ public class PathFinder {
 
         robot = new Robot(drive, odometry);
 
-        turnController = new GenericTurnController(0.01);
+        turnController = new GenericTurnController(-0.0001);
 
         followerGenerator = new GenericFollowerGenerator(
                 turnController);
@@ -71,22 +76,80 @@ public class PathFinder {
                 robot,
                 followerGenerator);
 
-        pathfinder.setSpeed(.005);
+        pathfinder.setSpeed(.0001);
         pathfinder.setTolerance(10);
-        pathfinder.setAngleTolerance(Angle.fromDeg(20));
+        pathfinder.setAngleTolerance(Angle.fromDeg(10));
 
     }
 
-    public void runTest(frc.robot.Odometry od, DriveTrain dt) {
+    public void runTest(frc.robot.Odometry od, DriveTrain dt, Shooter sh, Sensors se, Intake in) {
 
-        Trajectory trajectory = new LinearTrajectory(
-                new PointXYZ(12, 0, 0), // the trajectory's destination
-                0.1, // the speed (0-1) to move at
-                2, // give the trajectory a tolerance of 2
-                Angle.fromDeg(5) // and an angle tolerance of 5 degrees
-        );
+        sh.runIntake();
 
-        pathfinder.followTrajectory(trajectory);
+        if (od.getX() < .5 && stage == 0) {
+            dt.drive(0.4, 0, 0);
+            SmartDashboard.putBoolean("RUNNING", true);
+        } else if (stage == 0) {
+            dt.fullStop();
+            stage = 1;
+            SmartDashboard.putBoolean("RUNNING", false);
+        }
+
+        if (od.getX() > .3 && stage == 1) {
+            dt.drive(-0.2, 0, 0);
+        } else if (stage == 1) {
+            dt.fullStop();
+            stage = 2;
+        }
+
+        if (od.getX() < 2 && stage == 2) {
+            sh.runIntake();
+            in.reverseIndex();
+            dt.drive(0.2, 0, 0);
+        } else if (stage == 2) {
+            sh.stopIntake();
+            dt.fullStop();
+            in.stopIndex();
+            stage = 3;
+        }
+
+        if (od.getGyroAngle() < 180 && stage == 3) {
+            dt.drive(0, 0, 0.2);
+        } else if (stage == 3) {
+            dt.fullStop();
+            stage = 4;
+        }
+
+        if (od.getGyroAngle() > 26 && stage == 4) {
+            dt.drive(0, 0, -0.2);
+        } else if (stage == 4) {
+            dt.fullStop();
+            stage = 5;
+        }
+
+        if (od.getX() < 5.2 && stage == 5) {
+            if (od.getY() > -1.5) {
+                dt.drive(0.3, 0.1, 0);
+            } else {
+                dt.drive(0.3, 0, 0);
+            }
+        } else if (stage == 5) {
+            dt.fullStop();
+            stage = 6;
+        }
+
+        if (od.getX() > 0 && stage == 6) {
+            if (od.getY() < 0) {
+                dt.drive(-0.2, -0.1, 0);
+            } else if (od.getGyroAngle() < 180) {
+                dt.drive(-0.2, 0, -0.2);
+            } else {
+                dt.drive(-0.2, 0, 0);
+            }
+        } else if (stage == 6) {
+            dt.fullStop();
+            stage = 7;
+        }
 
     }
 

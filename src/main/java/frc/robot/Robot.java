@@ -5,6 +5,8 @@
 package frc.robot;
 
 import edu.wpi.first.wpilibj.TimedRobot;
+import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.PS4Controller;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -16,6 +18,8 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.networktables.NetworkTableEntry;
+
+import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 
 /*
  * The VM is configured to automatically run this class, and to call the
@@ -37,7 +41,6 @@ public class Robot extends TimedRobot {
   public PathFinder pf;
   public Odometry od;
 
-  public Joystick j;
   public Joystick weeb;
 
   PS4Controller dualsense;
@@ -49,6 +52,12 @@ public class Robot extends TimedRobot {
   Pose2d temp, tempAlt;
 
   boolean turbo;
+
+  String kDefaultAuto = "Two";
+  String kCustomAuto = "Four";
+  String kCustomAutoTwo = "Zero";
+  String m_autoSelected;
+  SendableChooser<String> m_chooser = new SendableChooser<>();
 
   /**
    * This function is run when the robot is first started up and should be used
@@ -65,9 +74,8 @@ public class Robot extends TimedRobot {
     cl = new Climbing();
     au = new AutoController();
     od = new Odometry();
-    pf = new PathFinder(od, dt);
+    pf = new PathFinder();
 
-    j = new Joystick(0);
     weeb = new Joystick(1);
 
     dualsense = new PS4Controller(3);
@@ -81,15 +89,14 @@ public class Robot extends TimedRobot {
     table = inst.getTable("Vision");
     heading = table.getEntry("heading");
 
-    // Smart Dashboard Init
-
-    SmartDashboard.putBoolean("Shooter", false);
-    SmartDashboard.putBoolean("Intake", false);
-
     SmartDashboard.putData("Field", od.field);
 
     turbo = false;
 
+    m_chooser.setDefaultOption("Two", kDefaultAuto);
+    m_chooser.addOption("Four", kCustomAuto);
+    m_chooser.addOption("Zero", kCustomAutoTwo);
+    SmartDashboard.putData("Auto choices", m_chooser);
   }
 
   /**
@@ -106,9 +113,12 @@ public class Robot extends TimedRobot {
   @Override
   public void robotPeriodic() {
     se.updateSensorsPlaceNumbers();
-    SmartDashboard.putNumber("Heading", heading.getDouble(0.0));
 
-    SmartDashboard.putNumber("Gyro", od.getGyroAngle());
+    // Shuffleboard.getTab("SmartDashboard")
+    // .add("Gyro", od.getGyroAngle())
+    // .withWidget(BuiltInWidgets.kGyro)
+    // .getEntry();
+
     SmartDashboard.putNumber("X", od.getX());
     SmartDashboard.putNumber("Y", od.getY());
 
@@ -140,11 +150,15 @@ public class Robot extends TimedRobot {
   @Override
   public void autonomousInit() {
 
+    m_autoSelected = m_chooser.getSelected();
+
     heading.setDouble(2.0);
 
     od.gyro.reset();
 
-    od.currentPose = new Pose2d(0.0, 0.0, new Rotation2d());
+    pf.stage = 0;
+
+    od.m_odometry.resetPosition(new Pose2d(0.0, 0.0, new Rotation2d()), new Rotation2d());
 
   }
 
@@ -152,11 +166,17 @@ public class Robot extends TimedRobot {
   @Override
   public void autonomousPeriodic() {
 
+    se.limeOn();
+
     od.updateOdometry(dt);
 
-    pf.pathfinder.tick();
-
-    pf.runTest(od, dt, sh, se, in);
+    if (m_autoSelected == kDefaultAuto) {
+      pf.runTwoBall(od, dt, sh, se, in, au, dualsense);
+    } else if (m_autoSelected == kCustomAuto) {
+      pf.runFull(od, dt, sh, se, in, au, dualsense);
+    } else {
+      // pf.runOneBall(od, dt, sh, se, in, au, dualsense);
+    }
 
     SmartDashboard.putNumber("Gyro", od.getGyroAngle());
     SmartDashboard.putNumber("X", od.getX());
@@ -168,13 +188,21 @@ public class Robot extends TimedRobot {
   @Override
   public void teleopInit() {
     cl.resetEncoders();
-    pf.pathfinder.clearTasks();
+
     od.gyro.reset();
+
+    au.reverseTime = 0;
+
+    in.resetLock();
+    in.lockMotor();
+
   }
 
   /** This function is called periodically during operator control. */
   @Override
   public void teleopPeriodic() {
+
+    au.index(in, sh, se, dualsense);
 
     if (dualsense.getL3ButtonPressed()) {
       turbo = !turbo;
@@ -198,56 +226,20 @@ public class Robot extends TimedRobot {
       dt.mecDrive(dualsense);
     }
 
-    au.index(in, sh, se, dualsense);
-
     // ---------------- Shooting ----------------
 
     if (dualsense.getR2Button()) {
-      sh.smartShoot(se.calcDistance(), se.getTX(), dt, in);
-      SmartDashboard.putBoolean("Shooter", true);
+      se.limeOn();
+      sh.smartShoot(se.calcDistance(), se.getTX(), dt, in, dualsense, false);
     } else if (dualsense.getR1Button()) {
       sh.manualShoot();
       in.reverseIndex();
     } else {
       sh.lastLimed = 0.0;
       sh.stopShoot();
-      SmartDashboard.putBoolean("Shooter", false);
     }
 
-    // ---------------- AIMBOT INTAKE ----------------
-
-    if (j.getRawButton(7)) {
-      if (heading.getDouble(0.0) < 0) {
-        dt.drive(0, 0, -.1);
-      } else if (heading.getDouble(0.0) < 1.5 && heading.getDouble(0.0) > .5) {
-        dt.drive(0, 0, .1);
-      } else {
-        dt.drive(.24, 0, 0);
-        sh.runIntake();
-      }
-    }
-
-    // ---------------- regular intake ----------------
-
-    if (j.getRawButton(8)) {
-      if (heading.getDouble(0.0) < 0) {
-        dt.drive(0, 0, -.15);
-      } else if (heading.getDouble(0.0) < 1.5 && heading.getDouble(0.0) > .5) {
-        dt.drive(0, 0, .15);
-      } else {
-        dt.drive(.3, 0, 0);
-        sh.runIntake();
-      }
-    }
-
-    cl.checkClimb(weeb);
-
-    if (sh.intakeMotor.getSelectedSensorVelocity() != 0) {
-      SmartDashboard.putBoolean("Intake", true);
-    } else {
-      SmartDashboard.putBoolean("Intake", false);
-    }
-
+    cl.checkClimb(weeb, dualsense);
   }
 
   /** This function is called once when the robot is disabled. */

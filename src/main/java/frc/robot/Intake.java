@@ -20,6 +20,7 @@ public class Intake {
     CANSparkMax indexMotor;
 
     int ballsIn;
+    double temp;
     long indexTime;
 
     public SparkMaxPIDController m_pidController;
@@ -88,10 +89,14 @@ public class Intake {
     }
 
     public void reverseIndexSpecial() {
-        indexMotor.set(-0.15);
+        indexMotor.set(-0.1);
     }
 
     public void reverseIndexFast() {
+        indexMotor.set(-0.15);
+    }
+
+    public void reverseIndexFaster() {
         indexMotor.set(-0.2);
     }
 
@@ -103,8 +108,20 @@ public class Intake {
         if (lockPos == 0) {
             lockPos = indexMotor.getEncoder().getPosition();
         } else {
-            SmartDashboard.putNumber("ENCODERDIFF", indexMotor.getEncoder().getPosition() - lockPos);
-            indexMotor.set(-0.4 * (indexMotor.getEncoder().getPosition() + .2 - lockPos));
+            temp = indexMotor.getEncoder().getPosition() - lockPos;
+            temp = temp + .2;
+            if (Math.abs(temp) < .2) {
+                indexMotor.set(0);
+            } else {
+                if (temp < -1) {
+                    temp = -1;
+                }
+                if (temp > 1) {
+                    temp = 1;
+                }
+                SmartDashboard.putNumber("ENCODERDIFF", temp);
+                indexMotor.set(-0.3 * temp);
+            }
         }
     }
 

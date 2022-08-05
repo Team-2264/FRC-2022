@@ -47,6 +47,18 @@ public class Sensors {
         cameraInit();
     }
 
+    public void limeOn() {
+        limeTable.getEntry("ledMode").setNumber(0);
+    }
+
+    public void limeOff() {
+        limeTable.getEntry("ledMode").setNumber(1);
+    }
+
+    public void limeBlink() {
+        limeTable.getEntry("ledMode").setNumber(2);
+    }
+
     public void updateSensorsPlaceNumbers() {
         updateLimelight();
         updateBeamBreaks();

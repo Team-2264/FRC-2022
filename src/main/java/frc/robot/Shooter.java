@@ -2,6 +2,7 @@ package frc.robot;
 
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
 
+import edu.wpi.first.wpilibj.PS4Controller;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
@@ -98,7 +99,10 @@ public class Shooter {
         manualShooting = true;
     }
 
-    public boolean smartShoot(double dist, double tx, DriveTrain dt, Intake in) {
+    public boolean smartShoot(double dist, double tx, DriveTrain dt, Intake in, PS4Controller dualsense, boolean auto) {
+
+        smartShooting = true;
+
         if (Math.abs(tx) - 1 > 3) {
             if (tx > 0) {
                 dt.drive(0, 0, -.2);
@@ -118,18 +122,39 @@ public class Shooter {
                 lastLimed = System.currentTimeMillis();
             } else {
 
+                if (dist > 10) {
+                    if (Math.abs(tx) - 1 > .5) {
+                        if (tx > .5) {
+                            dt.drive(0, 0, -.1);
+                        } else {
+                            dt.drive(0, 0, .1);
+                        }
+                        return false;
+                    }
+                }
+
                 if (getRPMThree(dist) != 0) {
                     shooterBottom.set(ControlMode.Velocity, -1 * convertToUnitsPer100ms(getRPMThree(dist)));
                     shooterTop.set(ControlMode.Velocity, convertToUnitsPer100ms(getRPMThree(dist)));
                 }
 
                 if (System.currentTimeMillis() - lastLimed > 1000) {
-                    if (dist > 14) {
-                        in.reverseIndexFast();
-                    } else if (dist > 7) {
-                        in.reverseIndexSpecial();
+
+                    if (dualsense.getSquareButton() || auto) {
+                        if (dist > 14) {
+                            in.reverseIndexFaster();
+                        } else if (dist > 7) {
+                            in.reverseIndexFast();
+                        }
                     } else {
-                        in.reverseIndexFast();
+
+                        if (dist > 14) {
+                            in.reverseIndexFast();
+                        } else if (dist > 7) {
+                            in.reverseIndexSpecial();
+                        } else {
+                            in.reverseIndexFast();
+                        }
                     }
                 }
             }
@@ -142,17 +167,18 @@ public class Shooter {
     }
 
     public void runIntakeFast() {
-        intakeMotor.set(ControlMode.Velocity, convertToUnitsPer100ms(-2000));
+        intakeMotor.set(ControlMode.Velocity, convertToUnitsPer100ms(-800));
     }
 
     public double getRPM(double dist) {
-        SmartDashboard.putNumber("RPM", Math.sqrt(125 * dist - 100));
+        // SmartDashboard.putNumber("RPM", Math.sqrt(125 * dist - 100));
         return 100 * Math.sqrt(125 * dist - 100);
     }
 
     public double getRPMTwo(double dist) {
         if (dist > 15.1 || dist < 15) {
-            SmartDashboard.putNumber("RPM", 1.15 * (Math.sqrt((162 * (dist + 1.1))) - 252) + 5);
+            // SmartDashboard.putNumber("RPM", 1.15 * (Math.sqrt((162 * (dist + 1.1))) -
+            // 252) + 5);
             return (100 * Math.sqrt(125 * dist - 100));
         } else {
             return 0;
@@ -161,7 +187,8 @@ public class Shooter {
 
     public double getRPMThree(double dist) {
         if (dist > 15.1 || dist < 15) {
-            SmartDashboard.putNumber("RPM", (-4.6296 * (dist * dist) + 214.8148 * (dist) + 1350.5648));
+            // SmartDashboard.putNumber("RPM", (-4.6296 * (dist * dist) + 214.8148 * (dist)
+            // + 1350.5648));
             if (dist > 14) {
                 return (-4.6296 * (dist * dist) + 214.8148 * (dist) + 1900.5648);
             } else if (dist > 9)

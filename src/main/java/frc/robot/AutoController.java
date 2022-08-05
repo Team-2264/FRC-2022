@@ -17,11 +17,9 @@ public class AutoController {
 
   public void index(Intake in, Shooter sh, Sensors se, PS4Controller dualsense) {
 
-    if (dualsense.getCircleButton()) {
+    if (dualsense.getR2Button() && System.currentTimeMillis() - sh.lastLimed > 1000) {
       in.resetLock();
-    }
-
-    if (dualsense.getR2Button() || dualsense.getR1Button()) {
+    } else if (dualsense.getR1Button()) {
       in.resetLock();
     } else if (dualsense.getL1Button()) {
       in.runIndex();

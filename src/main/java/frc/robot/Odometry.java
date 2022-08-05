@@ -73,16 +73,6 @@ public class Odometry extends AbstractOdometry {
         return gyro.getAngle();
     }
 
-    public void updateOdometry(PathFinder pf) {
-
-        wheelSpeeds = new MecanumDriveWheelSpeeds(convertToRPM(pf.frontLeft.getTalon().getSelectedSensorVelocity()),
-                convertToRPM(pf.frontRight.getTalon().getSelectedSensorVelocity()),
-                convertToRPM(pf.backLeft.getTalon().getSelectedSensorVelocity()),
-                convertToRPM(pf.backRight.getTalon().getSelectedSensorVelocity()));
-
-        currentPose = m_odometry.update(getGyroHeading(), wheelSpeeds);
-    }
-
     public void updateOdometry(DriveTrain dt) {
 
         wheelSpeeds = new MecanumDriveWheelSpeeds(convertToRPM(dt.frontLeft.getSelectedSensorVelocity()),

@@ -29,6 +29,7 @@
       "/LiveWindow/Ungrouped/Talon FX [7]": "Motor Controller",
       "/LiveWindow/Ungrouped/Talon FX [9]": "Motor Controller",
       "/LiveWindow/Ungrouped/Talon SRX [8]": "Motor Controller",
+      "/SmartDashboard/Auto choices": "String Chooser",
       "/SmartDashboard/Field": "Field2d"
     }
   },

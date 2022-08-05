@@ -10,7 +10,7 @@ import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.PneumaticsModuleType;
 
 import edu.wpi.first.wpilibj.Joystick;
-
+import edu.wpi.first.wpilibj.PS4Controller;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class Climbing {
@@ -149,9 +149,7 @@ public class Climbing {
     return System.currentTimeMillis();
   }
 
-  public void checkClimb(Joystick weeb) {
-    SmartDashboard.putNumber("Arm Left", leftEncoderDisplacement());
-    SmartDashboard.putNumber("Arm Right", rightEncoderDisplacement());
+  public void checkClimb(Joystick weeb, PS4Controller j) {
 
     if (buttonPressed == 0) {
       if (weeb.getRawButton(3)) {
@@ -160,9 +158,9 @@ public class Climbing {
         retractArms();
       }
 
-      if (weeb.getRawButton(4)) {
+      if (j.getTriangleButton()) {
         extendRam();
-      } else if (weeb.getRawButton(2)) {
+      } else if (j.getCrossButton()) {
         retractRam();
       }
 
@@ -257,13 +255,13 @@ public class Climbing {
 
         if (currentTime() - beginClimbingSeq > 1200 && currentTime() - beginClimbingSeq < 2600) {
           reverseLeft(3360);
-          reverseRight(3360);
+          reverseRight(3500);
         } else {
           stopRight();
           stopLeft();
         }
 
-        if (currentTime() - beginClimbingSeq > 1800 && System.currentTimeMillis() - beginClimbingSeq < 2000) {
+        if (currentTime() - beginClimbingSeq > 1500 && System.currentTimeMillis() - beginClimbingSeq < 2000) {
           extendArms();
         }
         if (currentTime() - beginClimbingSeq > 3200) {

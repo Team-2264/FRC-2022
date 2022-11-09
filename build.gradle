@@ -57,11 +57,14 @@ dependencies {
     implementation wpi.java.deps.wpilib()
     implementation wpi.java.vendor.java()
 
-    implementation 'com.github.Wobblyyyy.Pathfinder2:geometry:v1.4.2'
-    implementation 'com.github.Wobblyyyy.Pathfinder2:kinematics:v1.4.2'
-    implementation 'com.github.Wobblyyyy.Pathfinder2:core:v1.4.2'
-    implementation 'com.github.Wobblyyyy.Pathfinder2:frc:v1.4.2'
-    implementation 'com.github.Wobblyyyy.Pathfinder2:OdometryCore:v1.4.2'
+// implementation ('libs/Pathfinder.jar')
+
+
+    implementation 'com.github.Wobblyyyy.Pathfinder2:geometry:v2.1.1'
+    implementation 'com.github.Wobblyyyy.Pathfinder2:kinematics:v2.1.1'
+    implementation 'com.github.Wobblyyyy.Pathfinder2:core:v2.1.1'
+    implementation 'com.github.Wobblyyyy.Pathfinder2:frc:v2.1.1'
+    implementation 'com.github.Wobblyyyy.Pathfinder2:OdometryCore:v2.1.1'
 
     roborioDebug wpi.java.deps.wpilibJniDebug(wpi.platforms.roborio)
     roborioDebug wpi.java.vendor.jniDebug(wpi.platforms.roborio)

@@ -1,9 +1,9 @@
 package frc.robot;
 
-import edu.wpi.first.wpilibj.Joystick;
+// import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.PS4Controller;
-import me.wobblyyyy.pathfinder2.utils.DualJoystick;
-import com.revrobotics.CANSparkMax;
+// import me.wobblyyyy.pathfinder2.utils.DualJoystick;
+// import com.revrobotics.CANSparkMax;
 
 public class AutoController {
 

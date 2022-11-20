@@ -1,6 +1,6 @@
 package frc.robot;
 
-import java.util.ResourceBundle.Control;
+// import java.util.ResourceBundle.Control;
 
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 
@@ -79,6 +79,9 @@ public class DriveTrain {
     }
 
     public void mecDrive(PS4Controller controller) {
+        // 0.35, 0.4, 0.3 OG Values
+        mDrive.driveCartesian(-0.3 * controller.getLeftY(), 0.25 * controller.getLeftX(),
+                0.2 * controller.getRightX());
         mDrive.driveCartesian(-0.35 * controller.getLeftY(), 0.4 * controller.getLeftX(),
                 0.3 * controller.getRightX());
 

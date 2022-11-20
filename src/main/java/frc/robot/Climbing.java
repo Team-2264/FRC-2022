@@ -11,7 +11,7 @@ import edu.wpi.first.wpilibj.PneumaticsModuleType;
 
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.PS4Controller;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+// import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class Climbing {
 
@@ -158,9 +158,9 @@ public class Climbing {
         retractArms();
       }
 
-      if (j.getTriangleButton()) {
+      if (weeb.getRawButton(4)) {
         extendRam();
-      } else if (j.getCrossButton()) {
+      } else if (weeb.getRawButton(2)) {
         retractRam();
       }
 

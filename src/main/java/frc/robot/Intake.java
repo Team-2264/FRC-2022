@@ -9,7 +9,7 @@ import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMax.IdleMode;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
-import com.revrobotics.RelativeEncoder;
+// import com.revrobotics.RelativeEncoder;
 import com.revrobotics.SparkMaxPIDController;
 
 public class Intake {
@@ -24,7 +24,7 @@ public class Intake {
     long indexTime;
 
     public SparkMaxPIDController m_pidController;
-    private RelativeEncoder m_encoder;
+    // private RelativeEncoder m_encoder;
     public double kP, kI, kD, kIz, kFF, kMaxOutput, kMinOutput, maxRPM, lockPos;
 
     public Intake() {
